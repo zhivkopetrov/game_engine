@@ -16,6 +16,7 @@ add_library(
         ${_INC_DIR}/Application.h
         ${_INC_DIR}/Game.h
         
+        ${_SRC_DIR}/engine/config/EngineConfig.cpp
         ${_SRC_DIR}/engine/Engine.cpp
         ${_SRC_DIR}/engine/DebugConsole.cpp
         ${_SRC_DIR}/Application.cpp

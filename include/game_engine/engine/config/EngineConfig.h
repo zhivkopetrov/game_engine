@@ -4,6 +4,7 @@
 //C system headers
 
 //C++ system headers
+#include <string>
 
 //Other libraries headers
 #include "manager_utils/managers/config/ManagerHandlerConfig.h"
@@ -17,6 +18,10 @@ struct EngineConfig {
   uint64_t debugConsoleRsrcId = 0;
   uint32_t maxFrameRate = 0;
 };
+
+EngineConfig getDefaultEngineConfig(
+    const std::string &projectFolderName,
+    const std::string &loadingScreenResourcesPath = { });
 
 #endif /* GAME_ENGINE_ENGINECONFIG_H_ */
 
