@@ -10,7 +10,15 @@ set(_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_library(
     ${PROJECT_NAME} 
     STATIC
-
+        ${_INC_DIR}/engine/config/EngineConfig.h
+        ${_INC_DIR}/engine/Engine.h
+        ${_INC_DIR}/engine/DebugConsole.h
+        ${_INC_DIR}/Application.h
+        ${_INC_DIR}/Game.h
+        
+        ${_SRC_DIR}/engine/Engine.cpp
+        ${_SRC_DIR}/engine/DebugConsole.cpp
+        ${_SRC_DIR}/Application.cpp
 )
 
 set_target_cpp_standard(${PROJECT_NAME} 20)
