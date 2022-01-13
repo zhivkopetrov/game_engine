@@ -59,8 +59,6 @@ EngineConfig getDefaultEngineConfig(
       projectFolderName).append("/").append(
       ResourceFileHeader::getResourcesBinFolderName()).append("/");
 
-  cfg.managerHandlerCfg.sdlContainersCfg.loadingScreenCfg.loadingScreenUsage =
-      LoadingScreenUsage::ENABLED;
   cfg.managerHandlerCfg.sdlContainersCfg.loadingScreenCfg.monitorWidth =
       MONITOR_WIDTH;
   cfg.managerHandlerCfg.sdlContainersCfg.loadingScreenCfg.monitorHeight =
