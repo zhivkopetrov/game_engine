@@ -31,6 +31,7 @@ constexpr auto MAX_RENDERER_BACK_BUFFER_DATA_SIZE =
 LoadingScreenConfig generateLoadingScreenConfig(
     const std::string& loadingScreenFolderPath) {
   LoadingScreenConfig cfg;
+  cfg.loadingScreenUsage = LoadingScreenUsage::ENABLED;
   cfg.monitorWidth = MONITOR_WIDTH;
   cfg.monitorHeight = MONITOR_HEIGHT;
   cfg.backgroundImagePath = loadingScreenFolderPath + "background.png";
