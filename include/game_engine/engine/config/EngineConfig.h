@@ -21,7 +21,6 @@ struct EngineConfig {
 
 EngineConfig getDefaultEngineConfig(
     const std::string &projectInstallPrefix,
-    const std::string &projectFolderName,
     const std::string &loadingScreenResourcesPath = { });
 
 #endif /* GAME_ENGINE_ENGINECONFIG_H_ */

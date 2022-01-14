@@ -27,11 +27,21 @@ constexpr auto MAX_RUNTIME_RENDERER_COMMANDS = MAX_RUNTIME_WIDGETS * 2;
 //65k bytes
 constexpr auto MAX_RENDERER_BACK_BUFFER_DATA_SIZE =
     std::numeric_limits<uint16_t>::max();
+
+LoadingScreenConfig generateLoadingScreenConfig(
+    const std::string& loadingScreenFolderPath) {
+  LoadingScreenConfig cfg;
+  cfg.monitorWidth = MONITOR_WIDTH;
+  cfg.monitorHeight = MONITOR_HEIGHT;
+  cfg.backgroundImagePath = loadingScreenFolderPath + "background.png";
+  cfg.progressBarOnImagePath = loadingScreenFolderPath + "progressOn.png";
+  cfg.progressBarOffImagePath = loadingScreenFolderPath + "progressOff.png";
+  return cfg;
 }
+} //end anonymous namespace
 
 EngineConfig getDefaultEngineConfig(
     const std::string &projectInstallPrefix,
-    const std::string &projectFolderName,
     const std::string &loadingScreenResourcesPath) {
   EngineConfig cfg;
   cfg.maxFrameRate = MAX_FRAME_RATE;
@@ -54,21 +64,16 @@ EngineConfig getDefaultEngineConfig(
   sdlContainersCfg.maxRuntimeTexts = MAX_RUNTIME_TEXTS;
   sdlContainersCfg.resourcesFolderLocation.
       append(projectInstallPrefix).append("/").
-      append(projectFolderName).append("/").
       append(ResourceFileHeader::getResourcesFolderName()).append("/");
 
-  const std::string loadingScreenFolderPath =
-      sdlContainersCfg.resourcesFolderLocation + loadingScreenResourcesPath;
-
   auto& loadingScreenCfg = sdlContainersCfg.loadingScreenCfg;
-  loadingScreenCfg.monitorWidth = MONITOR_WIDTH;
-  loadingScreenCfg.monitorHeight = MONITOR_HEIGHT;
-  loadingScreenCfg.backgroundImagePath =
-      loadingScreenFolderPath + "background.png";
-  loadingScreenCfg.progressBarOnImagePath =
-      loadingScreenFolderPath + "progressOn.png";
-  loadingScreenCfg.progressBarOffImagePath =
-      loadingScreenFolderPath + "progressOff.png";
+  if (!loadingScreenResourcesPath.empty()) {
+    const auto loadingScreenFolderPath =
+          sdlContainersCfg.resourcesFolderLocation + loadingScreenResourcesPath;
+    loadingScreenCfg = generateLoadingScreenConfig(loadingScreenFolderPath);
+  } else {
+    loadingScreenCfg.loadingScreenUsage = LoadingScreenUsage::DISABLED;
+  }
 
   return cfg;
 }
