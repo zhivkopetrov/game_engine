@@ -30,46 +30,44 @@ constexpr auto MAX_RENDERER_BACK_BUFFER_DATA_SIZE =
 }
 
 EngineConfig getDefaultEngineConfig(
+    const std::string &projectInstallPrefix,
     const std::string &projectFolderName,
     const std::string &loadingScreenResourcesPath) {
   EngineConfig cfg;
-
   cfg.maxFrameRate = MAX_FRAME_RATE;
 
-  cfg.managerHandlerCfg.drawMgrBaseCfg.rendererConfig.maxRuntimeRendererCommands =
-      MAX_RUNTIME_RENDERER_COMMANDS;
-  cfg.managerHandlerCfg.drawMgrBaseCfg.rendererConfig.maxRuntimeWidgets =
-      MAX_RUNTIME_WIDGETS;
-  cfg.managerHandlerCfg.drawMgrBaseCfg.rendererConfig.maxRendererBackBufferDataSize =
-      MAX_RENDERER_BACK_BUFFER_DATA_SIZE;
-
+  auto& drawMgrCfg = cfg.managerHandlerCfg.drawMgrBaseCfg;
   cfg.managerHandlerCfg.drawMgrBaseCfg.monitorWidth = MONITOR_WIDTH;
   cfg.managerHandlerCfg.drawMgrBaseCfg.monitorHeight = MONITOR_HEIGHT;
   cfg.managerHandlerCfg.drawMgrBaseCfg.windowDisplayMode = windowDisplayMode;
   cfg.managerHandlerCfg.drawMgrBaseCfg.windowBorderMode = windowBorderMode;
 
-  cfg.managerHandlerCfg.sdlContainersCfg.maxResourceLoadingThreads =
-      MAX_RESOURCE_LOADING_THREADS;
-  cfg.managerHandlerCfg.sdlContainersCfg.maxRuntimeSpriteBuffers =
-      MAX_RUNTIME_SPRITE_BUFFERS;
-  cfg.managerHandlerCfg.sdlContainersCfg.maxRuntimeTexts = MAX_RUNTIME_TEXTS;
-  cfg.managerHandlerCfg.sdlContainersCfg.resourcesBinLocation =
-      FileSystemUtils::getBuildDirectory();
-  cfg.managerHandlerCfg.sdlContainersCfg.resourcesBinLocation.append(
-      projectFolderName).append("/").append(
-      ResourceFileHeader::getResourcesBinFolderName()).append("/");
+  auto& rendererCfg = drawMgrCfg.rendererConfig;
+  rendererCfg.maxRuntimeRendererCommands = MAX_RUNTIME_RENDERER_COMMANDS;
+  rendererCfg.maxRuntimeWidgets = MAX_RUNTIME_WIDGETS;
+  rendererCfg.maxRendererBackBufferDataSize =
+      MAX_RENDERER_BACK_BUFFER_DATA_SIZE;
 
-  cfg.managerHandlerCfg.sdlContainersCfg.loadingScreenCfg.monitorWidth =
-      MONITOR_WIDTH;
-  cfg.managerHandlerCfg.sdlContainersCfg.loadingScreenCfg.monitorHeight =
-      MONITOR_HEIGHT;
+  auto& sdlContainersCfg = cfg.managerHandlerCfg.sdlContainersCfg;
+  sdlContainersCfg.maxResourceLoadingThreads = MAX_RESOURCE_LOADING_THREADS;
+  sdlContainersCfg.maxRuntimeSpriteBuffers = MAX_RUNTIME_SPRITE_BUFFERS;
+  sdlContainersCfg.maxRuntimeTexts = MAX_RUNTIME_TEXTS;
+  sdlContainersCfg.resourcesFolderLocation.
+      append(projectInstallPrefix).append("/").
+      append(projectFolderName).append("/").
+      append(ResourceFileHeader::getResourcesFolderName()).append("/");
+
   const std::string loadingScreenFolderPath =
-      FileSystemUtils::getRootDirectory() + loadingScreenResourcesPath;
-  cfg.managerHandlerCfg.sdlContainersCfg.loadingScreenCfg.backgroundImagePath =
+      sdlContainersCfg.resourcesFolderLocation + loadingScreenResourcesPath;
+
+  auto& loadingScreenCfg = sdlContainersCfg.loadingScreenCfg;
+  loadingScreenCfg.monitorWidth = MONITOR_WIDTH;
+  loadingScreenCfg.monitorHeight = MONITOR_HEIGHT;
+  loadingScreenCfg.backgroundImagePath =
       loadingScreenFolderPath + "background.png";
-  cfg.managerHandlerCfg.sdlContainersCfg.loadingScreenCfg.progressBarOnImagePath =
+  loadingScreenCfg.progressBarOnImagePath =
       loadingScreenFolderPath + "progressOn.png";
-  cfg.managerHandlerCfg.sdlContainersCfg.loadingScreenCfg.progressBarOffImagePath =
+  loadingScreenCfg.progressBarOffImagePath =
       loadingScreenFolderPath + "progressOff.png";
 
   return cfg;
