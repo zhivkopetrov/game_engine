@@ -21,7 +21,7 @@ public:
   virtual int32_t init(const std::any& cfg) = 0;
   virtual void deinit() = 0;
 
-  virtual void draw() = 0;
+  virtual void draw() const = 0;
   virtual void handleEvent(const InputEvent &e) = 0;
 };
 
