@@ -52,15 +52,13 @@ int32_t Engine::recover() {
   return SUCCESS;
 }
 
-void Engine::onInitEnd() {
-  gTimerMgr->onInitEnd();
-}
-
 void Engine::mainLoop() {
   //give some time to the main(rendering thread) to enter it's drawing loop
   using namespace std::literals;
   std::this_thread::sleep_for(1s);
   Time fpsTime;
+
+  gTimerMgr->onInitEnd();
 
   while (true) {
     fpsTime.getElapsed(); //begin measure the new frame elapsed time

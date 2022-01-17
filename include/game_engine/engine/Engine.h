@@ -28,8 +28,6 @@ public:
 
   int32_t recover();
 
-  void onInitEnd();
-
   int32_t start();
 
 private:
