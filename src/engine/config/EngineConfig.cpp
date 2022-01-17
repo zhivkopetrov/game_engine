@@ -47,11 +47,13 @@ EngineConfig getDefaultEngineConfig(
   EngineConfig cfg;
   cfg.maxFrameRate = MAX_FRAME_RATE;
 
-  auto& drawMgrCfg = cfg.managerHandlerCfg.drawMgrBaseCfg;
-  cfg.managerHandlerCfg.drawMgrBaseCfg.monitorWidth = MONITOR_WIDTH;
-  cfg.managerHandlerCfg.drawMgrBaseCfg.monitorHeight = MONITOR_HEIGHT;
-  cfg.managerHandlerCfg.drawMgrBaseCfg.windowDisplayMode = windowDisplayMode;
-  cfg.managerHandlerCfg.drawMgrBaseCfg.windowBorderMode = windowBorderMode;
+  auto& drawMgrCfg = cfg.managerHandlerCfg.drawMgrCfg;
+  auto& monitorCfg = drawMgrCfg.monitorWindowConfig;
+  monitorCfg.name = "Default Name";
+  monitorCfg.width = MONITOR_WIDTH;
+  monitorCfg.height = MONITOR_HEIGHT;
+  monitorCfg.displayMode = windowDisplayMode;
+  monitorCfg.borderMode = windowBorderMode;
 
   auto& rendererCfg = drawMgrCfg.rendererConfig;
   rendererCfg.maxRuntimeRendererCommands = MAX_RUNTIME_RENDERER_COMMANDS;

@@ -67,7 +67,7 @@ void Engine::mainLoop() {
       return;
     }
 
-    const int64_t elapsedMiscroSeconds = fpsTime.getElapsed().toMicroseconds();
+    const auto elapsedMiscroSeconds = fpsTime.getElapsed().toMicroseconds();
     if (_debugConsole.isActive()) {
       populateDebugConsole(elapsedMiscroSeconds);
     }
@@ -149,8 +149,8 @@ void Engine::limitFPS(const int64_t elapsedMicroseconds) {
   const auto maxMicrosecondsPerFrame = microsecondsInASeconds
       / gDrawMgr->getMaxFrameRate();
 
-  const int64_t microSecondsFpsDelay = maxMicrosecondsPerFrame
-      - elapsedMicroseconds;
+  const auto microSecondsFpsDelay =
+      maxMicrosecondsPerFrame - elapsedMicroseconds;
 
   if (0 < microSecondsFpsDelay) {
     //Sleep the logic thread if max FPS is reached.
