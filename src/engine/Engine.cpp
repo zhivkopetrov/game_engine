@@ -31,6 +31,8 @@ int32_t Engine::init(const EngineConfig &engineCfg) {
     LOGERR("Error in _managerHandler.init()");
     return FAILURE;
   }
+  gDrawMgr->setMaxFrameRate(engineCfg.maxFrameRate);
+  gDrawMgr->setSDLContainers(gRsrcMgr);
 
   if (SUCCESS != _inputEvent.init()) {
     LOGERR("Error in _inputEvent.init()");
@@ -43,13 +45,15 @@ int32_t Engine::init(const EngineConfig &engineCfg) {
     return FAILURE;
   }
 
-  onInitEnd(engineCfg);
-
   return SUCCESS;
 }
 
 int32_t Engine::recover() {
   return SUCCESS;
+}
+
+void Engine::onInitEnd() {
+  gTimerMgr->onInitEnd();
 }
 
 void Engine::mainLoop() {
@@ -128,12 +132,6 @@ void Engine::drawFrame() {
 void Engine::handleEvent() {
   _game.handleEvent(_inputEvent);
   _debugConsole.handleEvent(_inputEvent);
-}
-
-void Engine::onInitEnd(const EngineConfig &engineCfg) {
-  gDrawMgr->setSDLContainers(gRsrcMgr);
-  gDrawMgr->setMaxFrameRate(engineCfg.maxFrameRate);
-  gTimerMgr->onInitEnd();
 }
 
 void Engine::populateDebugConsole(const int64_t elapsedMiscroSeconds) {

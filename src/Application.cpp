@@ -50,6 +50,8 @@ int32_t Application::init(const EngineConfig &engineCfg,
     return FAILURE;
   }
 
+  _engine->onInitEnd();
+
   return SUCCESS;
 }
 

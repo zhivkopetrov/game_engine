@@ -28,6 +28,8 @@ public:
 
   int32_t recover();
 
+  void onInitEnd();
+
   int32_t start();
 
 private:
@@ -38,8 +40,6 @@ private:
   void drawFrame();
 
   void handleEvent();
-
-  void onInitEnd(const EngineConfig &engineCfg);
 
   void populateDebugConsole(const int64_t elapsedMicroseconds);
 
