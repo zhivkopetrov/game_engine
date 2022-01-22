@@ -12,6 +12,7 @@
 #include "manager_utils/managers/DrawMgr.h"
 #include "manager_utils/managers/RsrcMgr.h"
 #include "manager_utils/managers/TimerMgr.h"
+#include "utils/rng/Rng.h"
 #include "utils/ErrorCode.h"
 #include "utils/Log.h"
 
@@ -27,6 +28,11 @@ Engine::~Engine() {
 }
 
 int32_t Engine::init(const EngineConfig &engineCfg) {
+  if (SUCCESS != Rng::getInstance().init()) {
+    LOGERR("Error in Rng.init()");
+    return FAILURE;
+  }
+
   if (SUCCESS != _managerHandler.init(engineCfg.managerHandlerCfg)) {
     LOGERR("Error in _managerHandler.init()");
     return FAILURE;
