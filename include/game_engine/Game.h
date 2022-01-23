@@ -23,6 +23,9 @@ public:
 
   virtual void draw() const = 0;
   virtual void handleEvent(const InputEvent &e) = 0;
+
+  //called once every frame
+  virtual void process() = 0;
 };
 
 #endif /* GAME_ENGINE_GAME_H_ */

@@ -107,6 +107,7 @@ int32_t Engine::start() {
 
 bool Engine::processFrame() {
   _managerHandler.process();
+  _game.process();
 
   while (_inputEvent.pollEvent()) {
     if (_inputEvent.checkForExitRequest()) {
