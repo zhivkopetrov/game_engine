@@ -32,8 +32,6 @@ LoadingScreenConfig generateLoadingScreenConfig(
     const std::string& loadingScreenFolderPath) {
   LoadingScreenConfig cfg;
   cfg.loadingScreenUsage = LoadingScreenUsage::ENABLED;
-  cfg.monitorWidth = MONITOR_WIDTH;
-  cfg.monitorHeight = MONITOR_HEIGHT;
   cfg.backgroundImagePath = loadingScreenFolderPath + "background.png";
   cfg.progressBarOnImagePath = loadingScreenFolderPath + "progressOn.png";
   cfg.progressBarOffImagePath = loadingScreenFolderPath + "progressOff.png";
