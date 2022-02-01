@@ -6,10 +6,12 @@
 //C++ system headers
 #include <cstdint>
 #include <any>
+#include <functional>
 
 //Other libraries headers
 
 //Own components headers
+#include "game_engine/defines/ActionEventDefines.h"
 
 //Forward declarations
 class InputEvent;
@@ -26,6 +28,13 @@ public:
 
   //called once every frame
   virtual void process() = 0;
+
+  void setInvokeActionEventCb(const InvokeActionEventCb& cb) {
+    _invokeActionEventCb = cb;
+  }
+
+protected:
+  InvokeActionEventCb _invokeActionEventCb;
 };
 
 #endif /* GAME_ENGINE_GAME_H_ */

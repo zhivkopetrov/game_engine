@@ -12,6 +12,7 @@
 #include "manager_utils/managers/DrawMgr.h"
 #include "manager_utils/managers/RsrcMgr.h"
 #include "manager_utils/managers/TimerMgr.h"
+#include "sdl_utils/input/InputEvent.h"
 #include "utils/rng/Rng.h"
 #include "utils/ErrorCode.h"
 #include "utils/Log.h"
@@ -28,6 +29,8 @@ Engine::~Engine() {
 }
 
 int32_t Engine::init(const EngineConfig &engineCfg) {
+  using namespace std::placeholders;
+
   if (SUCCESS != Rng::getInstance().init()) {
     LOGERR("Error in Rng.init()");
     return FAILURE;
@@ -40,8 +43,9 @@ int32_t Engine::init(const EngineConfig &engineCfg) {
   gDrawMgr->setMaxFrameRate(engineCfg.maxFrameRate);
   gDrawMgr->setSDLContainers(gRsrcMgr);
 
-  if (SUCCESS != _inputEvent.init()) {
-    LOGERR("Error in _inputEvent.init()");
+  if (SUCCESS !=
+      _eventHandler.init(std::bind(&Engine::handleEvent, this, _1))) {
+    LOGERR("Error in _eventHandler.init()");
     return FAILURE;
   }
 
@@ -50,6 +54,9 @@ int32_t Engine::init(const EngineConfig &engineCfg) {
     LOGERR("Error in _debugConsole.init()");
     return FAILURE;
   }
+
+  _game.setInvokeActionEventCb(
+      std::bind(&EventHandler::invokeActionEvent, &_eventHandler, _1, _2));
 
   return SUCCESS;
 }
@@ -66,14 +73,11 @@ void Engine::mainLoop() {
 
   gTimerMgr->onInitEnd();
 
-  while (true) {
+  while (_isActive) {
     fpsTime.getElapsed(); //begin measure the new frame elapsed time
 
-    if (processFrame()) {
-      //user has requested exit -> break the main loop
-      gDrawMgr->shutdownRenderer();
-      return;
-    }
+    process();
+    drawFrame();
 
     const auto elapsedMiscroSeconds = fpsTime.getElapsed().toMicroseconds();
     if (_debugConsole.isActive()) {
@@ -81,45 +85,30 @@ void Engine::mainLoop() {
     }
 
 #if !ENABLE_VSYNC
-    limitFPS(elapsedMiscroSeconds);
+    processEvents(elapsedMiscroSeconds);
 #endif //!ENABLE_VSYNC
   }
+
+  gDrawMgr->shutdownRenderer();
 }
 
 void Engine::deinit() {
   _managerHandler.deinit();
-  _inputEvent.deinit();
+  _eventHandler.deinit();
 }
 
 int32_t Engine::start() {
   std::thread engineThread = std::thread(&Engine::mainLoop, this);
 
-  //enter rendering loop
+  //blocking call
   gDrawMgr->startRenderingLoop();
-
-  //sanity check
-  if (engineThread.joinable()) {
-    engineThread.join();
-  }
-
+  engineThread.join();
   return SUCCESS;
 }
 
-bool Engine::processFrame() {
+void Engine::process() {
   _managerHandler.process();
   _game.process();
-
-  while (_inputEvent.pollEvent()) {
-    if (_inputEvent.checkForExitRequest()) {
-      return true;
-    }
-
-    handleEvent();
-  }
-
-  drawFrame();
-
-  return false;
 }
 
 void Engine::drawFrame() {
@@ -134,32 +123,41 @@ void Engine::drawFrame() {
   gDrawMgr->finishFrame();
 }
 
-void Engine::handleEvent() {
-  _game.handleEvent(_inputEvent);
-  _debugConsole.handleEvent(_inputEvent);
+void Engine::handleEvent(const InputEvent& e) {
+  if (e.checkForExitRequest()) {
+    _isActive = false;
+    return;
+  }
+
+  _game.handleEvent(e);
+  _debugConsole.handleEvent(e);
 }
 
-void Engine::populateDebugConsole(const int64_t elapsedMiscroSeconds) {
-  const DebugConsoleData debugData (elapsedMiscroSeconds,
+void Engine::processEvents(int64_t frameElapsedMicroseconds) {
+  constexpr int64_t microsecondsInASeconds = 1000000;
+  const int64_t maxMicrosecondsPerFrame = microsecondsInASeconds
+      / gDrawMgr->getMaxFrameRate();
+
+  const int64_t frameTimeLeftMicroseconds =
+      maxMicrosecondsPerFrame - frameElapsedMicroseconds;
+
+  if (0 >= frameTimeLeftMicroseconds) {
+    LOGY("Warning, FPS drop. Frame delayed with: %ld. "
+         "No events will be processed on this frame",
+         (-1 * frameTimeLeftMicroseconds));
+    return;
+  }
+
+  //process events for the rest of the frame duration without throttling the CPU
+  _eventHandler.processStoredEvents(
+      std::chrono::microseconds(frameTimeLeftMicroseconds));
+}
+
+void Engine::populateDebugConsole(int64_t frameElapsedMicroseconds) {
+  const DebugConsoleData debugData (frameElapsedMicroseconds,
       gTimerMgr->getActiveTimersCount(), gRsrcMgr->getGPUMemoryUsage(),
       gDrawMgr->getTotalWidgetCount());
 
   _debugConsole.update(debugData);
-}
-
-void Engine::limitFPS(const int64_t elapsedMicroseconds) {
-  constexpr auto microsecondsInASeconds = 1000000;
-  const auto maxMicrosecondsPerFrame = microsecondsInASeconds
-      / gDrawMgr->getMaxFrameRate();
-
-  const auto microSecondsFpsDelay =
-      maxMicrosecondsPerFrame - elapsedMicroseconds;
-
-  if (0 < microSecondsFpsDelay) {
-    //Sleep the logic thread if max FPS is reached.
-    //No need to struggle the CPU.
-    std::this_thread::sleep_for(
-        std::chrono::microseconds(microSecondsFpsDelay));
-  }
 }
 

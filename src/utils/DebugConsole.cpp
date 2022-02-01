@@ -1,5 +1,5 @@
 //Corresponding header
-#include "game_engine/engine/DebugConsole.h"
+#include "game_engine/utils/DebugConsole.h"
 
 //C system headers
 

@@ -8,14 +8,15 @@
 
 //Other libraries headers
 #include "manager_utils/managers/ManagerHandler.h"
-#include "sdl_utils/input/InputEvent.h"
 
 //Own components headers
 #include "game_engine/engine/config/EngineConfig.h"
-#include "game_engine/engine/DebugConsole.h"
+#include "game_engine/event_handler/EventHandler.h"
+#include "game_engine/utils/DebugConsole.h"
 
 //Forward declarations
 class Game;
+class InputEvent;
 
 class Engine {
 public:
@@ -23,31 +24,24 @@ public:
   ~Engine();
 
   int32_t init(const EngineConfig &engineCfg);
-
   void deinit();
-
   int32_t recover();
-
   int32_t start();
+  void handleEvent(const InputEvent& e);
 
 private:
   void mainLoop();
-
-  bool processFrame();
-
+  void process(); //called once per frame
   void drawFrame();
-
-  void handleEvent();
-
-  void populateDebugConsole(const int64_t elapsedMicroseconds);
-
-  void limitFPS(const int64_t elapsedTime);
+  void processEvents(int64_t frameElapsedMicroseconds);
+  void populateDebugConsole(int64_t frameElapsedMicroseconds);
 
   ManagerHandler _managerHandler;
-  InputEvent _inputEvent;
+  EventHandler _eventHandler;
   DebugConsole _debugConsole;
-
   Game& _game;
+
+  bool _isActive = true;
 };
 
 #endif /* GAME_ENGINE_ENGINE_H_ */
