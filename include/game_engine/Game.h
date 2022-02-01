@@ -18,7 +18,7 @@ class InputEvent;
 
 class Game {
 public:
-  virtual ~Game() = default;
+  virtual ~Game() noexcept = default;
 
   virtual int32_t init(const std::any& cfg) = 0;
   virtual void deinit() = 0;

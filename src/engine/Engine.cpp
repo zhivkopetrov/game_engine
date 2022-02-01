@@ -24,10 +24,6 @@ Engine::Engine(Game& game) : _game(game) {
 
 }
 
-Engine::~Engine() {
-  deinit();
-}
-
 int32_t Engine::init(const EngineConfig &engineCfg) {
   using namespace std::placeholders;
 
@@ -44,8 +40,8 @@ int32_t Engine::init(const EngineConfig &engineCfg) {
   gDrawMgr->setSDLContainers(gRsrcMgr);
 
   if (SUCCESS !=
-      _eventHandler.init(std::bind(&Engine::handleEvent, this, _1))) {
-    LOGERR("Error in _eventHandler.init()");
+      _actionEventHandler.init(std::bind(&Engine::handleEvent, this, _1))) {
+    LOGERR("Error in _actionEventHandler.init()");
     return FAILURE;
   }
 
@@ -55,13 +51,27 @@ int32_t Engine::init(const EngineConfig &engineCfg) {
     return FAILURE;
   }
 
-  _game.setInvokeActionEventCb(
-      std::bind(&EventHandler::invokeActionEvent, &_eventHandler, _1, _2));
+  _game.setInvokeActionEventCb(std::bind(
+      &ActionEventHandler::invokeActionEvent, &_actionEventHandler, _1, _2));
 
   return SUCCESS;
 }
 
 int32_t Engine::recover() {
+  return SUCCESS;
+}
+
+void Engine::deinit() {
+  _managerHandler.deinit();
+  _actionEventHandler.deinit();
+}
+
+int32_t Engine::start() {
+  std::thread engineThread = std::thread(&Engine::mainLoop, this);
+
+  //blocking call
+  gDrawMgr->startRenderingLoop();
+  engineThread.join();
   return SUCCESS;
 }
 
@@ -88,22 +98,12 @@ void Engine::mainLoop() {
     processEvents(elapsedMiscroSeconds);
 #endif //!ENABLE_VSYNC
   }
+}
 
+void Engine::shutdown() {
+  _isActive = false;
+  _actionEventHandler.shutdown();
   gDrawMgr->shutdownRenderer();
-}
-
-void Engine::deinit() {
-  _managerHandler.deinit();
-  _eventHandler.deinit();
-}
-
-int32_t Engine::start() {
-  std::thread engineThread = std::thread(&Engine::mainLoop, this);
-
-  //blocking call
-  gDrawMgr->startRenderingLoop();
-  engineThread.join();
-  return SUCCESS;
 }
 
 void Engine::process() {
@@ -125,7 +125,7 @@ void Engine::drawFrame() {
 
 void Engine::handleEvent(const InputEvent& e) {
   if (e.checkForExitRequest()) {
-    _isActive = false;
+    shutdown();
     return;
   }
 
@@ -149,7 +149,7 @@ void Engine::processEvents(int64_t frameElapsedMicroseconds) {
   }
 
   //process events for the rest of the frame duration without throttling the CPU
-  _eventHandler.processStoredEvents(
+  _actionEventHandler.processStoredEvents(
       std::chrono::microseconds(frameTimeLeftMicroseconds));
 }
 

@@ -68,7 +68,6 @@ void Application::deinit() {
 }
 
 int32_t Application::loadDependencies() {
-
   //install user defined signal handlers
   SignalHandler::installSignal(SIGSEGV);
   SignalHandler::installSignal(SIGQUIT);

@@ -11,7 +11,7 @@
 
 //Own components headers
 #include "game_engine/engine/config/EngineConfig.h"
-#include "game_engine/event_handler/EventHandler.h"
+#include "game_engine/event_handler/ActionEventHandler.h"
 #include "game_engine/utils/DebugConsole.h"
 
 //Forward declarations
@@ -21,7 +21,6 @@ class InputEvent;
 class Engine {
 public:
   Engine(Game& game);
-  ~Engine();
 
   int32_t init(const EngineConfig &engineCfg);
   void deinit();
@@ -31,13 +30,14 @@ public:
 
 private:
   void mainLoop();
+  void shutdown();
   void process(); //called once per frame
   void drawFrame();
   void processEvents(int64_t frameElapsedMicroseconds);
   void populateDebugConsole(int64_t frameElapsedMicroseconds);
 
   ManagerHandler _managerHandler;
-  EventHandler _eventHandler;
+  ActionEventHandler _actionEventHandler;
   DebugConsole _debugConsole;
   Game& _game;
 

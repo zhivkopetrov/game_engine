@@ -23,14 +23,14 @@ add_library(
         ${_INC_DIR}/engine/config/EngineConfig.h
         ${_INC_DIR}/engine/Engine.h
         ${_INC_DIR}/defines/ActionEventDefines.h
-        ${_INC_DIR}/event_handler/EventHandler.h
+        ${_INC_DIR}/event_handler/ActionEventHandler.h
         ${_INC_DIR}/utils/DebugConsole.h
         ${_INC_DIR}/Application.h
         ${_INC_DIR}/Game.h
         
         ${_SRC_DIR}/engine/config/EngineConfig.cpp
         ${_SRC_DIR}/engine/Engine.cpp
-        ${_SRC_DIR}/event_handler/EventHandler.cpp
+        ${_SRC_DIR}/event_handler/ActionEventHandler.cpp
         ${_SRC_DIR}/utils/DebugConsole.cpp
         ${_SRC_DIR}/Application.cpp
 )
