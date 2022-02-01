@@ -94,9 +94,7 @@ void Engine::mainLoop() {
       populateDebugConsole(elapsedMiscroSeconds);
     }
 
-#if !ENABLE_VSYNC
     processEvents(elapsedMiscroSeconds);
-#endif //!ENABLE_VSYNC
   }
 }
 
