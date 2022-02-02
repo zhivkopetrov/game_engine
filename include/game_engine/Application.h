@@ -16,22 +16,37 @@
 
 //Forward declarations
 
+struct ApplicationConfig {
+  EngineConfig engineCfg;
+  std::any gameCfg;
+  int32_t argc;
+  char **args;
+};
+
 class Application {
 public:
-  Application(const std::shared_ptr<Game>& game);
-  ~Application();
+  Application(std::unique_ptr<Game> game);
+  virtual ~Application() noexcept;
 
-  int32_t init(const EngineConfig &engineCfg, const std::any& gameCfg);
+  Application(const Application &other) = delete;
+  Application(Application &&other) = delete;
+
+  Application& operator=(const Application &other) = delete;
+  Application& operator=(Application &&other) = delete;
+
+  int32_t init(const ApplicationConfig& cfg);
 
   int32_t run();
 
+protected:
+  virtual int32_t loadDependencies(int32_t argc, char **args);
+  virtual void unloadDependencies();
+
 private:
   void deinit();
+  void printUptime();
 
-  int32_t loadDependencies();
-  void unloadDependencies();
-
-  std::shared_ptr<Game> _game = nullptr;
+  std::unique_ptr<Game> _game = nullptr;
   std::unique_ptr<Engine> _engine = nullptr;
 
   //used to measure engine init and total uptime
