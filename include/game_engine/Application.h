@@ -18,7 +18,7 @@
 
 class Application {
 public:
-  Application(std::unique_ptr<Game> game);
+  Application(const std::shared_ptr<Game>& game);
   ~Application();
 
   int32_t init(const EngineConfig &engineCfg, const std::any& gameCfg);
@@ -31,7 +31,7 @@ private:
   int32_t loadDependencies();
   void unloadDependencies();
 
-  std::unique_ptr<Game> _game = nullptr;
+  std::shared_ptr<Game> _game = nullptr;
   std::unique_ptr<Engine> _engine = nullptr;
 
   //used to measure engine init and total uptime

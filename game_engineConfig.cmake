@@ -10,5 +10,10 @@ endif()
 
 # This is for catkin compatibility.
 set(game_engine_LIBRARIES game_engine::game_engine)
-get_target_property(game_engine_INCLUDE_DIRS game_engine::game_engine INTERFACE_INCLUDE_DIRECTORIES)
+
+get_target_property(
+    game_engine_INCLUDE_DIRS
+    game_engine::game_engine
+    INTERFACE_INCLUDE_DIRECTORIES
+)
 

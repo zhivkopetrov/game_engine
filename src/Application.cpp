@@ -13,8 +13,7 @@
 
 //Own components headers
 
-Application::Application(std::unique_ptr<Game> game)
-    : _game(std::move(game)) {
+Application::Application(const std::shared_ptr<Game>& game) : _game(game) {
 
 }
 
