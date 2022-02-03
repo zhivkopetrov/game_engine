@@ -38,11 +38,12 @@ protected:
   virtual int32_t loadDependencies(int32_t argc, char **args);
   virtual void unloadDependencies();
 
+  std::unique_ptr<Game> _game = nullptr;
+
 private:
   void deinit();
   void printUptime();
 
-  std::unique_ptr<Game> _game = nullptr;
   std::unique_ptr<Engine> _engine = nullptr;
 
   //used to measure engine init and total uptime
