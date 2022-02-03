@@ -9,6 +9,8 @@
 #include <functional>
 
 //Other libraries headers
+#include "utils/class/NonCopyable.h"
+#include "utils/class/NonMoveable.h"
 
 //Own components headers
 #include "game_engine/defines/ActionEventDefines.h"
@@ -16,8 +18,9 @@
 //Forward declarations
 class InputEvent;
 
-class Game {
+class Game : public NonCopyable, public NonMoveable {
 public:
+  Game() = default;
   virtual ~Game() noexcept = default;
 
   virtual int32_t init(const std::any& cfg) = 0;

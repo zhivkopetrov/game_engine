@@ -8,6 +8,8 @@
 #include <memory>
 
 //Other libraries headers
+#include "utils/class/NonCopyable.h"
+#include "utils/class/NonMoveable.h"
 #include "utils/time/Time.h"
 
 //Own components headers
@@ -23,16 +25,10 @@ struct ApplicationConfig {
   char **args;
 };
 
-class Application {
+class Application : public NonCopyable, public NonMoveable {
 public:
   Application(std::unique_ptr<Game> game);
   virtual ~Application() noexcept;
-
-  Application(const Application &other) = delete;
-  Application(Application &&other) = delete;
-
-  Application& operator=(const Application &other) = delete;
-  Application& operator=(Application &&other) = delete;
 
   int32_t init(const ApplicationConfig& cfg);
 
