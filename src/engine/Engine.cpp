@@ -140,7 +140,7 @@ void Engine::processEvents(int64_t frameElapsedMicroseconds) {
       maxMicrosecondsPerFrame - frameElapsedMicroseconds;
 
   if (0 >= frameTimeLeftMicroseconds) {
-    LOGY("Warning, FPS drop. Frame delayed with: %ld. "
+    LOGY("Warning, FPS drop. Frame delayed with: (%ld us). "
          "No events will be processed on this frame",
          (-1 * frameTimeLeftMicroseconds));
     return;
