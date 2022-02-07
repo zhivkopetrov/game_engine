@@ -6,6 +6,7 @@
 //C++ system headers
 
 //Other libraries headers
+#include "game_engine/communicator/NullCommunicator.h"
 #include "utils/debug/SignalHandler.h"
 #include "utils/ErrorCode.h"
 #include "utils/Log.h"
@@ -31,10 +32,15 @@ int32_t Application::loadDependencies(
   return SUCCESS;
 }
 
-void Application::obtain(std::unique_ptr<Communicator> communicator,
-                         std::unique_ptr<Game> game) {
-  _communicator = std::move(communicator);
+void Application::obtain(std::unique_ptr<Game> game,
+                         std::unique_ptr<Communicator> communicator) {
   _game = std::move(game);
+
+  if (communicator) {
+    _communicator = std::move(communicator);
+  } else {
+    _communicator = std::make_unique<NullCommunicator>();
+  }
 }
 
 int32_t Application::init(const ApplicationConfig &cfg) {

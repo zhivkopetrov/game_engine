@@ -17,7 +17,7 @@
 #include "utils/Log.h"
 
 //Own components headers
-#include "game_engine/Communicator.h"
+#include "game_engine/communicator/Communicator.h"
 #include "game_engine/Game.h"
 
 Engine::Engine(Communicator &communicator, Game &game)

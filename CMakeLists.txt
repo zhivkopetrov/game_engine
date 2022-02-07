@@ -24,6 +24,8 @@ set(_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_library(
     ${PROJECT_NAME} 
     STATIC
+        ${_INC_DIR}/communicator/Communicator.h
+        ${_INC_DIR}/communicator/NullCommunicator.h
         ${_INC_DIR}/config/ApplicationConfig.h
         ${_INC_DIR}/engine/config/EngineConfig.h
         ${_INC_DIR}/engine/Engine.h
@@ -32,9 +34,9 @@ add_library(
         ${_INC_DIR}/event_handler/ActionEventHandler.h
         ${_INC_DIR}/utils/DebugConsole.h
         ${_INC_DIR}/Application.h
-        ${_INC_DIR}/Communicator.h
         ${_INC_DIR}/Game.h
         
+        ${_SRC_DIR}/communicator/NullCommunicator.cpp
         ${_SRC_DIR}/engine/config/EngineConfig.cpp
         ${_SRC_DIR}/engine/Engine.cpp
         ${_SRC_DIR}/event_handler/ActionEventHandler.cpp

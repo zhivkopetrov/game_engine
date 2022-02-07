@@ -15,7 +15,7 @@
 //Own components headers
 #include "game_engine/config/ApplicationConfig.h"
 #include "game_engine/engine/Engine.h"
-#include "game_engine/Communicator.h"
+#include "game_engine/communicator/Communicator.h"
 #include "game_engine/Game.h"
 
 //Forward declarations
@@ -27,8 +27,8 @@ public:
   int32_t loadDependencies(
       const std::vector<DependencyDescription> &dependencies);
 
-  void obtain(std::unique_ptr<Communicator> communicator,
-              std::unique_ptr<Game> game);
+  void obtain(std::unique_ptr<Game> game,
+              std::unique_ptr<Communicator> communicator = nullptr);
 
   int32_t init(const ApplicationConfig &cfg);
 

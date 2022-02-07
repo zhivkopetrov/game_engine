@@ -27,5 +27,4 @@ public:
   virtual void shutdown() = 0;
 };
 
-
 #endif /* GAME_ENGINE_COMMUNICATOR_H_ */
