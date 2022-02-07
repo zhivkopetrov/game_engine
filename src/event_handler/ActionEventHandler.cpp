@@ -4,8 +4,10 @@
 //C system headers
 
 //C++ system headers
+#include <future>
 
 //Other libraries headers
+#include "utils/data_type/EnumClassUtils.h"
 #include "utils/time/Time.h"
 #include "utils/ErrorCode.h"
 #include "utils/Log.h"
@@ -26,8 +28,8 @@ int32_t ActionEventHandler::init(const HandleInputEventCb &handleInputEventCb) {
   }
   _handleInputEventCb = handleInputEventCb;
 
-  _pollInputEventsThread =
-      std::thread(&ActionEventHandler::pollInputEvents, this);
+  _pollInputEventsThread = std::thread(&ActionEventHandler::pollInputEvents,
+      this);
 
   return SUCCESS;
 }
@@ -45,16 +47,24 @@ void ActionEventHandler::shutdown() {
   _eventQueue.shutdown();
 }
 
-void ActionEventHandler::invokeActionEvent(const ActionEventCb& cb,
+void ActionEventHandler::invokeActionEvent(const ActionEventCb &cb,
                                            ActionEventType eventType) {
-  if (ActionEventType::NON_BLOCKING == eventType) {
+  switch (eventType) {
+  case ActionEventType::NON_BLOCKING:
     _eventQueue.pushWithCopy(cb);
-    return;
+    break;
+  case ActionEventType::BLOCKING:
+    invokeBlockingEvent(cb);
+    break;
+  default:
+    LOGERR("Error, received unsupported ActionEventType: %d",
+        getEnumValue(eventType));
+    break;
   }
 }
 
 void ActionEventHandler::processStoredEvents(
-    const std::chrono::microseconds& allowedTime) {
+    const std::chrono::microseconds &allowedTime) {
   auto remainingTime = allowedTime;
   Time elapsedTime;
   while (0us < remainingTime) {
@@ -69,12 +79,12 @@ void ActionEventHandler::processStoredEvents(
 }
 
 bool ActionEventHandler::processSingleEvent(
-    const std::chrono::microseconds& allowedTime) {
+    const std::chrono::microseconds &allowedTime) {
   bool shouldStop = true;
 
   ActionEventCb cb;
-  const auto [isShutdowned, hasTimedOut] =
-      _eventQueue.waitAndPop(cb, allowedTime);
+  const auto [isShutdowned, hasTimedOut] = _eventQueue.waitAndPop(cb,
+      allowedTime);
   if (isShutdowned) {
     _isActive = false;
     return shouldStop;
@@ -110,5 +120,28 @@ void ActionEventHandler::pollInputEvents() {
 
     std::this_thread::sleep_for(1ms);
   } //end main loop
+}
+
+void ActionEventHandler::invokeBlockingEvent(const ActionEventCb &cb) {
+  std::packaged_task<void()> task(cb);
+  auto future = task.get_future();
+  auto f = [&task](){
+    task();
+  };
+  _eventQueue.push(std::move(f));
+
+  Time time;
+  while (true) {
+    if (!_isActive) {
+      break;
+    }
+
+    constexpr auto futureWaitMs = 10;
+    const auto status =
+        future.wait_for(std::chrono::milliseconds(futureWaitMs));
+    if (std::future_status::ready == status) {
+      break;
+    }
+  }
 }
 

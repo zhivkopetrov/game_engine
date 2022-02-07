@@ -54,6 +54,8 @@ private:
   //called from a dedicated thread
   void pollInputEvents();
 
+  void invokeBlockingEvent(const ActionEventCb &cb);
+
   //stores callbacks from multiple threads and executes them sequentially
   //in the update thread in a lock-free thread-safe manner
   ThreadSafeQueue<ActionEventCb> _eventQueue;
