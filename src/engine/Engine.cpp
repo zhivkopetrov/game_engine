@@ -64,7 +64,6 @@ int32_t Engine::recover() {
 }
 
 void Engine::deinit() {
-  _communicator.deinit();
   _managerHandler.deinit();
   _actionEventHandler.deinit();
 }
@@ -148,6 +147,7 @@ void Engine::processEvents(int64_t frameElapsedMicroseconds) {
       - frameElapsedMicroseconds;
 
   if (0 >= frameTimeLeftMicroseconds) {
+    //TODO figure out why alt-tab fullscreen is causing false-positive
     LOGY("Warning, FPS drop. Frame delayed with: (%ld us). No events will be "
         "processed on this frame", (-1 * frameTimeLeftMicroseconds));
     return;
