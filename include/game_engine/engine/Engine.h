@@ -16,11 +16,12 @@
 
 //Forward declarations
 class Game;
+class Communicator;
 class InputEvent;
 
 class Engine {
 public:
-  Engine(Game& game);
+  Engine(Communicator& communicator, Game& game);
 
   int32_t init(const EngineConfig &engineCfg);
   void deinit();
@@ -39,6 +40,8 @@ private:
   ManagerHandler _managerHandler;
   ActionEventHandler _actionEventHandler;
   DebugConsole _debugConsole;
+
+  Communicator& _communicator;
   Game& _game;
 
   bool _isActive = true;

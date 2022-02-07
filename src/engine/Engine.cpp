@@ -5,7 +5,6 @@
 
 //C++ system headers
 #include <string>
-#include <thread>
 #include <chrono>
 
 //Other libraries headers
@@ -18,9 +17,11 @@
 #include "utils/Log.h"
 
 //Own components headers
+#include "game_engine/Communicator.h"
 #include "game_engine/Game.h"
 
-Engine::Engine(Game& game) : _game(game) {
+Engine::Engine(Communicator &communicator, Game &game)
+    : _communicator(communicator), _game(game) {
 
 }
 
@@ -39,8 +40,8 @@ int32_t Engine::init(const EngineConfig &engineCfg) {
   gDrawMgr->setMaxFrameRate(engineCfg.maxFrameRate);
   gDrawMgr->setSDLContainers(gRsrcMgr);
 
-  if (SUCCESS !=
-      _actionEventHandler.init(std::bind(&Engine::handleEvent, this, _1))) {
+  if (SUCCESS != _actionEventHandler.init(
+          std::bind(&Engine::handleEvent, this, _1))) {
     LOGERR("Error in _actionEventHandler.init()");
     return FAILURE;
   }
@@ -51,8 +52,9 @@ int32_t Engine::init(const EngineConfig &engineCfg) {
     return FAILURE;
   }
 
-  _game.setInvokeActionEventCb(std::bind(
-      &ActionEventHandler::invokeActionEvent, &_actionEventHandler, _1, _2));
+  _game.setInvokeActionEventCb(
+      std::bind(&ActionEventHandler::invokeActionEvent, &_actionEventHandler,
+          _1, _2));
 
   return SUCCESS;
 }
@@ -62,23 +64,28 @@ int32_t Engine::recover() {
 }
 
 void Engine::deinit() {
+  _communicator.deinit();
   _managerHandler.deinit();
   _actionEventHandler.deinit();
 }
 
 int32_t Engine::start() {
-  std::thread engineThread = std::thread(&Engine::mainLoop, this);
+  std::thread updateThread = std::thread(&Engine::mainLoop, this);
+
+  //communicator will probably spawn own thread and control will return
+  _communicator.start();
 
   //blocking call
   gDrawMgr->startRenderingLoop();
-  engineThread.join();
+
+  updateThread.join();
   return SUCCESS;
 }
 
 void Engine::mainLoop() {
   //give some time to the main(rendering thread) to enter it's drawing loop
   using namespace std::literals;
-  std::this_thread::sleep_for(1s);
+  std::this_thread::sleep_for(2ms);
   Time fpsTime;
 
   gTimerMgr->onInitEnd();
@@ -100,6 +107,7 @@ void Engine::mainLoop() {
 
 void Engine::shutdown() {
   _isActive = false;
+  _communicator.shutdown();
   _actionEventHandler.shutdown();
   gDrawMgr->shutdownRenderer();
 }
@@ -121,7 +129,7 @@ void Engine::drawFrame() {
   gDrawMgr->finishFrame();
 }
 
-void Engine::handleEvent(const InputEvent& e) {
+void Engine::handleEvent(const InputEvent &e) {
   if (e.checkForExitRequest()) {
     shutdown();
     return;
@@ -136,13 +144,12 @@ void Engine::processEvents(int64_t frameElapsedMicroseconds) {
   const int64_t maxMicrosecondsPerFrame = microsecondsInASeconds
       / gDrawMgr->getMaxFrameRate();
 
-  const int64_t frameTimeLeftMicroseconds =
-      maxMicrosecondsPerFrame - frameElapsedMicroseconds;
+  const int64_t frameTimeLeftMicroseconds = maxMicrosecondsPerFrame
+      - frameElapsedMicroseconds;
 
   if (0 >= frameTimeLeftMicroseconds) {
-    LOGY("Warning, FPS drop. Frame delayed with: (%ld us). "
-         "No events will be processed on this frame",
-         (-1 * frameTimeLeftMicroseconds));
+    LOGY("Warning, FPS drop. Frame delayed with: (%ld us). No events will be "
+        "processed on this frame", (-1 * frameTimeLeftMicroseconds));
     return;
   }
 
@@ -152,7 +159,7 @@ void Engine::processEvents(int64_t frameElapsedMicroseconds) {
 }
 
 void Engine::populateDebugConsole(int64_t frameElapsedMicroseconds) {
-  const DebugConsoleData debugData (frameElapsedMicroseconds,
+  const DebugConsoleData debugData(frameElapsedMicroseconds,
       gTimerMgr->getActiveTimersCount(), gRsrcMgr->getGPUMemoryUsage(),
       gDrawMgr->getTotalWidgetCount());
 

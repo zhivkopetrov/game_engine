@@ -32,6 +32,7 @@ add_library(
         ${_INC_DIR}/event_handler/ActionEventHandler.h
         ${_INC_DIR}/utils/DebugConsole.h
         ${_INC_DIR}/Application.h
+        ${_INC_DIR}/Communicator.h
         ${_INC_DIR}/Game.h
         
         ${_SRC_DIR}/engine/config/EngineConfig.cpp

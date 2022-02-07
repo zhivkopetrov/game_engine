@@ -12,11 +12,6 @@
 
 //Own components headers
 
-Application::Application(std::unique_ptr<Game> game)
-    : _game(std::move(game)) {
-
-}
-
 Application::~Application() noexcept {
   deinit();
   unloadDependencies();
@@ -36,8 +31,14 @@ int32_t Application::loadDependencies(
   return SUCCESS;
 }
 
+void Application::obtain(std::unique_ptr<Communicator> communicator,
+                         std::unique_ptr<Game> game) {
+  _communicator = std::move(communicator);
+  _game = std::move(game);
+}
+
 int32_t Application::init(const ApplicationConfig &cfg) {
-  _engine = std::make_unique<Engine>(*_game.get());
+  _engine = std::make_unique<Engine>(*_communicator.get(), *_game.get());
 
   if (SUCCESS != _engine->init(cfg.engineCfg)) {
     LOGERR("Error in _engine.init()");
@@ -54,6 +55,11 @@ int32_t Application::init(const ApplicationConfig &cfg) {
     return FAILURE;
   }
 
+  if (SUCCESS != _communicator->init(cfg.communicatorCfg)) {
+    LOGERR("Error in _communicator.init()");
+    return FAILURE;
+  }
+
   return SUCCESS;
 }
 
@@ -62,6 +68,10 @@ int32_t Application::run() {
 }
 
 void Application::deinit() {
+  //manually reset point after deinit to enforce destruction order
+  _communicator->deinit();
+  _communicator.reset();
+
   _game->deinit();
   _game.reset();
 

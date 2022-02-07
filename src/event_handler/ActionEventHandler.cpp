@@ -34,6 +34,7 @@ int32_t ActionEventHandler::init(const HandleInputEventCb &handleInputEventCb) {
 
 void ActionEventHandler::deinit() {
   //wait for the thread to join before deinit of the InputEventGenerator
+  //or the generator may access the deinitilized object
   _pollInputEventsThread.join();
 
   _inputEventGenerator.deinit();
