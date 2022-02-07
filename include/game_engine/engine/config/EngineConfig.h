@@ -10,6 +10,7 @@
 #include "manager_utils/managers/config/ManagerHandlerConfig.h"
 
 //Own components headers
+#include "game_engine/defines/DependencyDefines.h"
 
 //Forward declarations
 
@@ -22,6 +23,9 @@ struct EngineConfig {
 EngineConfig getDefaultEngineConfig(
     const std::string &projectInstallPrefix,
     const std::string &loadingScreenResourcesPath = { });
+
+std::vector<DependencyDescription> getDefaultEngineDependencies(int32_t argc,
+                                                                char **args);
 
 #endif /* GAME_ENGINE_ENGINECONFIG_H_ */
 

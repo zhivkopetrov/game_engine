@@ -6,7 +6,6 @@
 //C++ system headers
 
 //Other libraries headers
-#include "sdl_utils/SDLLoader.h"
 #include "utils/debug/SignalHandler.h"
 #include "utils/ErrorCode.h"
 #include "utils/Log.h"
@@ -20,16 +19,24 @@ Application::Application(std::unique_ptr<Game> game)
 
 Application::~Application() noexcept {
   deinit();
-
+  unloadDependencies();
   printUptime();
 }
 
-int32_t Application::init(const ApplicationConfig& cfg) {
-  if (SUCCESS != loadDependencies(cfg.argc, cfg.args)) {
-    LOGERR("Error in loadDependencies");
-    return FAILURE;
+int32_t Application::loadDependencies(
+    const std::vector<DependencyDescription> &dependencies) {
+  _dependencies = dependencies;
+  for (const auto& [name, loadDependency, unloadDependency] : _dependencies) {
+    if (SUCCESS != loadDependency()) {
+      LOGERR("loadDependency() failed for %s", name.c_str());
+      return FAILURE;
+    }
   }
 
+  return SUCCESS;
+}
+
+int32_t Application::init(const ApplicationConfig &cfg) {
   _engine = std::make_unique<Engine>(*_game.get());
 
   if (SUCCESS != _engine->init(cfg.engineCfg)) {
@@ -54,36 +61,20 @@ int32_t Application::run() {
   return _engine->start();
 }
 
-int32_t Application::loadDependencies([[maybe_unused]]int32_t argc,
-                                      [[maybe_unused]]char **args) {
-  //install user defined signal handlers
-  SignalHandler::installSignal(SIGSEGV);
-  SignalHandler::installSignal(SIGQUIT);
-
-  //open SDL libraries
-  if (SUCCESS != SDLLoader::init()) {
-    LOGERR("Error in SDLLoader::init() -> Terminating ...");
-    return FAILURE;
-  } else {
-    LOGG("SDLLoader::init() took: %ld ms", _time.getElapsed().toMilliseconds());
-  }
-
-  return SUCCESS;
-}
-
-void Application::unloadDependencies() {
-  //close SDL libraries
-  SDLLoader::deinit();
-}
-
 void Application::deinit() {
   _game->deinit();
   _game.reset();
 
   _engine->deinit();
   _engine.reset();
+}
 
-  unloadDependencies();
+void Application::unloadDependencies() {
+  //unload dependency in reverse order -> they might be dependant
+  for (auto revIt = _dependencies.rbegin(); revIt != _dependencies.rend();
+      ++revIt) {
+    revIt->unloadDependencyCb();
+  }
 }
 
 void Application::printUptime() {

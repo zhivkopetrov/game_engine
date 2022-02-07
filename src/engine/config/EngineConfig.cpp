@@ -7,6 +7,7 @@
 
 //Other libraries headers
 #include "resource_utils/common/ResourceFileHeader.h"
+#include "sdl_utils/SDLLoader.h"
 #include "utils/file_system/FileSystemUtils.h"
 
 //Own components headers
@@ -29,7 +30,7 @@ constexpr auto MAX_RENDERER_BACK_BUFFER_DATA_SIZE =
     std::numeric_limits<uint16_t>::max();
 
 LoadingScreenConfig generateLoadingScreenConfig(
-    const std::string& loadingScreenFolderPath) {
+    const std::string &loadingScreenFolderPath) {
   LoadingScreenConfig cfg;
   cfg.loadingScreenUsage = LoadingScreenUsage::ENABLED;
   cfg.backgroundImagePath = loadingScreenFolderPath + "background.png";
@@ -45,37 +46,43 @@ EngineConfig getDefaultEngineConfig(
   EngineConfig cfg;
   cfg.maxFrameRate = MAX_FRAME_RATE;
 
-  auto& drawMgrCfg = cfg.managerHandlerCfg.drawMgrCfg;
-  auto& monitorCfg = drawMgrCfg.monitorWindowConfig;
+  auto &drawMgrCfg = cfg.managerHandlerCfg.drawMgrCfg;
+  auto &monitorCfg = drawMgrCfg.monitorWindowConfig;
   monitorCfg.name = "Default Name";
   monitorCfg.width = MONITOR_WIDTH;
   monitorCfg.height = MONITOR_HEIGHT;
   monitorCfg.displayMode = windowDisplayMode;
   monitorCfg.borderMode = windowBorderMode;
 
-  auto& rendererCfg = drawMgrCfg.rendererConfig;
+  auto &rendererCfg = drawMgrCfg.rendererConfig;
   rendererCfg.maxRuntimeRendererCommands = MAX_RUNTIME_RENDERER_COMMANDS;
   rendererCfg.maxRuntimeWidgets = MAX_RUNTIME_WIDGETS;
   rendererCfg.maxRendererBackBufferDataSize =
       MAX_RENDERER_BACK_BUFFER_DATA_SIZE;
 
-  auto& sdlContainersCfg = cfg.managerHandlerCfg.sdlContainersCfg;
+  auto &sdlContainersCfg = cfg.managerHandlerCfg.sdlContainersCfg;
   sdlContainersCfg.maxResourceLoadingThreads = MAX_RESOURCE_LOADING_THREADS;
   sdlContainersCfg.maxRuntimeSpriteBuffers = MAX_RUNTIME_SPRITE_BUFFERS;
   sdlContainersCfg.maxRuntimeTexts = MAX_RUNTIME_TEXTS;
-  sdlContainersCfg.resourcesFolderLocation.
-      append(projectInstallPrefix).append("/").
-      append(ResourceFileHeader::getResourcesFolderName()).append("/");
+  sdlContainersCfg.resourcesFolderLocation.append(projectInstallPrefix).append(
+      "/").append(ResourceFileHeader::getResourcesFolderName()).append("/");
 
-  auto& loadingScreenCfg = sdlContainersCfg.loadingScreenCfg;
+  auto &loadingScreenCfg = sdlContainersCfg.loadingScreenCfg;
   if (!loadingScreenResourcesPath.empty()) {
     const auto loadingScreenFolderPath =
-          sdlContainersCfg.resourcesFolderLocation + loadingScreenResourcesPath;
+        sdlContainersCfg.resourcesFolderLocation + loadingScreenResourcesPath;
     loadingScreenCfg = generateLoadingScreenConfig(loadingScreenFolderPath);
   } else {
     loadingScreenCfg.loadingScreenUsage = LoadingScreenUsage::DISABLED;
   }
 
   return cfg;
+}
+
+std::vector<DependencyDescription> getDefaultEngineDependencies(
+    [[maybe_unused]]int32_t argc, [[maybe_unused]]char **args) {
+  const DependencyDescription sdlDependencies
+    { "SDL2", SDLLoader::init, SDLLoader::deinit };
+  return { sdlDependencies };
 }
 

@@ -24,9 +24,11 @@ set(_SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 add_library(
     ${PROJECT_NAME} 
     STATIC
+        ${_INC_DIR}/config/ApplicationConfig.h
         ${_INC_DIR}/engine/config/EngineConfig.h
         ${_INC_DIR}/engine/Engine.h
         ${_INC_DIR}/defines/ActionEventDefines.h
+        ${_INC_DIR}/defines/DependencyDefines.h
         ${_INC_DIR}/event_handler/ActionEventHandler.h
         ${_INC_DIR}/utils/DebugConsole.h
         ${_INC_DIR}/Application.h
