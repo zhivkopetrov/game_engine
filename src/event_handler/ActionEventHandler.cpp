@@ -130,7 +130,6 @@ void ActionEventHandler::invokeBlockingEvent(const ActionEventCb &cb) {
   };
   _eventQueue.push(std::move(f));
 
-  Time time;
   while (true) {
     if (!_isActive) {
       break;
