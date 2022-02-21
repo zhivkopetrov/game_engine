@@ -28,10 +28,10 @@ public:
   int32_t recover();
   int32_t start();
   void handleEvent(const InputEvent& e);
+  void shutdown();
 
 private:
   void mainLoop();
-  void shutdown();
   void process(); //called once per frame
   void drawFrame();
   void processEvents(int64_t frameElapsedMicroseconds);

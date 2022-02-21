@@ -36,8 +36,13 @@ public:
     _invokeActionEventCb = cb;
   }
 
+  void setSystemShutdownCb(const SystemShutdownCb& cb) {
+    _systemShutdownCb = cb;
+  }
+
 protected:
   InvokeActionEventCb _invokeActionEventCb;
+  SystemShutdownCb _systemShutdownCb;
 };
 
 #endif /* GAME_ENGINE_GAME_H_ */

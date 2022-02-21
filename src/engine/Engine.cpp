@@ -56,6 +56,8 @@ int32_t Engine::init(const EngineConfig &engineCfg) {
       std::bind(&ActionEventHandler::invokeActionEvent, &_actionEventHandler,
           _1, _2));
 
+  _game.setSystemShutdownCb(std::bind(&Engine::shutdown, this));
+
   return SUCCESS;
 }
 
@@ -81,6 +83,13 @@ int32_t Engine::start() {
   return SUCCESS;
 }
 
+void Engine::shutdown() {
+  _isActive = false;
+  _communicator.shutdown();
+  _actionEventHandler.shutdown();
+  gDrawMgr->shutdownRenderer();
+}
+
 void Engine::mainLoop() {
   //give some time to the main(rendering thread) to enter it's drawing loop
   using namespace std::literals;
@@ -102,13 +111,6 @@ void Engine::mainLoop() {
 
     processEvents(elapsedMiscroSeconds);
   }
-}
-
-void Engine::shutdown() {
-  _isActive = false;
-  _communicator.shutdown();
-  _actionEventHandler.shutdown();
-  gDrawMgr->shutdownRenderer();
 }
 
 void Engine::process() {

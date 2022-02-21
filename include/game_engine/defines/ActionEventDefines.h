@@ -28,5 +28,6 @@ using ActionEventCb = std::function<void()>;
 using InvokeActionEventCb =
     std::function<void(const ActionEventCb& cb, ActionEventType eventType)>;
 using HandleInputEventCb = std::function<void(const InputEvent&)>;
+using SystemShutdownCb = std::function<void()>;
 
 #endif /* GAME_ENGINE_ACTIONEVENTDEFINES_H_ */
