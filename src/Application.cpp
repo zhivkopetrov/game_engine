@@ -16,7 +16,7 @@
 Application::~Application() noexcept {
   deinit();
   unloadDependencies();
-  LOG("Shutdown complete");
+  LOGG("Shutdown complete");
   printUptime();
 }
 
