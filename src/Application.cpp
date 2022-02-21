@@ -16,6 +16,7 @@
 Application::~Application() noexcept {
   deinit();
   unloadDependencies();
+  LOG("Shutdown complete");
   printUptime();
 }
 
@@ -70,6 +71,7 @@ int32_t Application::init(const ApplicationConfig &cfg) {
 }
 
 int32_t Application::run() {
+  LOGG("Starting Application");
   return _engine->start();
 }
 
@@ -107,7 +109,7 @@ void Application::printUptime() {
 
   const auto elapsedSeconds = remainingSeconds;
 
-  LOGG("Total engine uptime: Hours: %ld, Minutes: %ld, Seconds: %ld",
+  LOG("Total Application uptime: Hours: %ld, Minutes: %ld, Seconds: %ld\n",
       elapsedHours, elapsedMinutes, elapsedSeconds);
 }
 

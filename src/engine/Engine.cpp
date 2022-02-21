@@ -84,6 +84,7 @@ int32_t Engine::start() {
 }
 
 void Engine::shutdown() {
+  LOG("Initiating shutdown...");
   _isActive = false;
   _communicator.shutdown();
   _actionEventHandler.shutdown();
