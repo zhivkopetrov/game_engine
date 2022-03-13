@@ -1,13 +1,12 @@
 #ifndef GAME_ENGINE_DEBUGCONSOLE_H_
 #define GAME_ENGINE_DEBUGCONSOLE_H_
 
-//C system headers
-
-//C++ system headers
+//System headers
 #include <cstdint>
 
 //Other libraries headers
 #include "manager_utils/drawing/Text.h"
+#include "utils/ErrorCode.h"
 
 //Own components headers
 
@@ -33,7 +32,7 @@ class DebugConsole {
 public:
   DebugConsole();
 
-  int32_t init(const uint64_t fontRsrcId, const int64_t maxFrameRate);
+  ErrorCode init(const uint64_t fontRsrcId, const int64_t maxFrameRate);
 
   /** @ brief used to toggle active/inactive status of the debug console
    * */

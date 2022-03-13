@@ -1,19 +1,18 @@
 #ifndef GAME_ENGINE_DEPENDENCYDEFINES_H_
 #define GAME_ENGINE_DEPENDENCYDEFINES_H_
 
-//C system headers
-
-//C++ system headers
+//System headers
 #include <functional>
 #include <string>
 
 //Other libraries headers
+#include "utils/ErrorCode.h"
 
 //Own components headers
 
 //Forward declarations
 
-using LoadDependencyCb = std::function<int32_t()>;
+using LoadDependencyCb = std::function<ErrorCode()>;
 using UnloadDependencyCb = std::function<void()>;
 
 struct DependencyDescription {

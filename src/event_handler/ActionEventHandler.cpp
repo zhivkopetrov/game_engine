@@ -1,9 +1,7 @@
 //Corresponding header
 #include "game_engine/event_handler/ActionEventHandler.h"
 
-//C system headers
-
-//C++ system headers
+//System headers
 #include <future>
 
 //Other libraries headers
@@ -16,22 +14,23 @@
 
 using namespace std::literals;
 
-int32_t ActionEventHandler::init(const HandleInputEventCb &handleInputEventCb) {
-  if (SUCCESS != _inputEventGenerator.init()) {
+ErrorCode ActionEventHandler::init(
+    const HandleInputEventCb &handleInputEventCb) {
+  if (ErrorCode::SUCCESS != _inputEventGenerator.init()) {
     LOGERR("Error in _inputEventGenerator.init()");
-    return FAILURE;
+    return ErrorCode::FAILURE;
   }
 
   if (nullptr == handleInputEventCb) {
     LOGERR("Error, nullptr provided for HandleInputEventCb");
-    return FAILURE;
+    return ErrorCode::FAILURE;
   }
   _handleInputEventCb = handleInputEventCb;
 
   _pollInputEventsThread = std::thread(&ActionEventHandler::pollInputEvents,
       this);
 
-  return SUCCESS;
+  return ErrorCode::SUCCESS;
 }
 
 void ActionEventHandler::deinit() {

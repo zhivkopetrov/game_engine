@@ -1,9 +1,7 @@
 #ifndef GAME_ENGINE_NULLCOMMUNICATOR_H_
 #define GAME_ENGINE_NULLCOMMUNICATOR_H_
 
-//C system headers
-
-//C++ system headers
+//System headers
 
 //Other libraries headers
 
@@ -14,7 +12,7 @@
 
 class NullCommunicator final : public Communicator {
 public:
-  int32_t init(const std::any &cfg) override;
+  ErrorCode init(const std::any &cfg) override;
   void deinit() override;
   void start() override;
   void shutdown() override;

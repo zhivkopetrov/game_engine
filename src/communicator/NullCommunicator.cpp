@@ -1,17 +1,15 @@
 //Corresponding header
 #include "game_engine/communicator/NullCommunicator.h"
 
-//C system headers
-
-//C++ system headers
+//System headers
 
 //Other libraries headers
 #include "utils/ErrorCode.h"
 
 //Own components headers
 
-int32_t NullCommunicator::init([[maybe_unused]]const std::any &cfg) {
-  return SUCCESS;
+ErrorCode NullCommunicator::init([[maybe_unused]]const std::any &cfg) {
+  return ErrorCode::SUCCESS;
 }
 
 void NullCommunicator::deinit() {

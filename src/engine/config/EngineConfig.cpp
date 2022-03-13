@@ -1,9 +1,7 @@
 //Corresponding header
 #include "game_engine/engine/config/EngineConfig.h"
 
-//C system headers
-
-//C++ system headers
+//System headers
 
 //Other libraries headers
 #include "resource_utils/common/ResourceFileHeader.h"

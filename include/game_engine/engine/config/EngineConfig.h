@@ -1,9 +1,7 @@
 #ifndef GAME_ENGINE_ENGINECONFIG_H_
 #define GAME_ENGINE_ENGINECONFIG_H_
 
-//C system headers
-
-//C++ system headers
+//System headers
 #include <string>
 
 //Other libraries headers

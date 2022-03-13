@@ -1,9 +1,7 @@
 #ifndef GAME_ENGINE_GAME_H_
 #define GAME_ENGINE_GAME_H_
 
-//C system headers
-
-//C++ system headers
+//System headers
 #include <cstdint>
 #include <any>
 #include <functional>
@@ -11,6 +9,7 @@
 //Other libraries headers
 #include "utils/class/NonCopyable.h"
 #include "utils/class/NonMoveable.h"
+#include "utils/ErrorCode.h"
 
 //Own components headers
 #include "game_engine/defines/ActionEventDefines.h"
@@ -23,7 +22,7 @@ public:
   Game() = default;
   virtual ~Game() noexcept = default;
 
-  virtual int32_t init(const std::any& cfg) = 0;
+  virtual ErrorCode init(const std::any& cfg) = 0;
   virtual void deinit() = 0;
 
   virtual void draw() const = 0;

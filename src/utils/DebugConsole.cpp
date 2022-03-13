@@ -1,9 +1,7 @@
 //Corresponding header
 #include "game_engine/utils/DebugConsole.h"
 
-//C system headers
-
-//C++ system headers
+//System headers
 #include <string>
 
 //Other libraries headers
@@ -23,8 +21,8 @@ DebugConsole::DebugConsole()
 
 }
 
-int32_t DebugConsole::init(const uint64_t fontRsrcId,
-                           const int64_t maxFrameRate) {
+ErrorCode DebugConsole::init(const uint64_t fontRsrcId,
+                             const int64_t maxFrameRate) {
   constexpr auto INITIAL_TEXT_X = 20;
   constexpr auto INITIAL_TEXT_Y = 10;
   constexpr auto TEXT_OFFSET_Y = 10;
@@ -40,7 +38,7 @@ int32_t DebugConsole::init(const uint64_t fontRsrcId,
 
   _maxFrames = maxFrameRate;
 
-  return SUCCESS;
+  return ErrorCode::SUCCESS;
 }
 
 void DebugConsole::handleEvent(const InputEvent &e) {

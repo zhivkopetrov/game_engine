@@ -1,9 +1,7 @@
 #ifndef GAME_ENGINE_EVENTHANDLER_H_
 #define GAME_ENGINE_EVENTHANDLER_H_
 
-//C system headers
-
-//C++ system headers
+//System headers
 #include <cstdint>
 #include <thread>
 #include <atomic>
@@ -11,6 +9,7 @@
 //Other libraries headers
 #include "sdl_utils/input/InputEventGenerator.h"
 #include "utils/concurrency/ThreadSafeQueue.h"
+#include "utils/ErrorCode.h"
 
 //Own components headers
 #include "game_engine/defines/ActionEventDefines.h"
@@ -19,7 +18,7 @@
 
 class ActionEventHandler {
 public:
-  int32_t init(const HandleInputEventCb& handleInputEventCb);
+  ErrorCode init(const HandleInputEventCb& handleInputEventCb);
   void deinit();
   void shutdown();
 

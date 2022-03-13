@@ -1,9 +1,7 @@
 //Corresponding header
 #include "game_engine/engine/Engine.h"
 
-//C system headers
-
-//C++ system headers
+//System headers
 #include <string>
 #include <chrono>
 
@@ -25,31 +23,31 @@ Engine::Engine(Communicator &communicator, Game &game)
 
 }
 
-int32_t Engine::init(const EngineConfig &engineCfg) {
+ErrorCode Engine::init(const EngineConfig &engineCfg) {
   using namespace std::placeholders;
 
-  if (SUCCESS != Rng::getInstance().init()) {
+  if (ErrorCode::SUCCESS != Rng::getInstance().init()) {
     LOGERR("Error in Rng.init()");
-    return FAILURE;
+    return ErrorCode::FAILURE;
   }
 
-  if (SUCCESS != _managerHandler.init(engineCfg.managerHandlerCfg)) {
+  if (ErrorCode::SUCCESS != _managerHandler.init(engineCfg.managerHandlerCfg)) {
     LOGERR("Error in _managerHandler.init()");
-    return FAILURE;
+    return ErrorCode::FAILURE;
   }
   gDrawMgr->setMaxFrameRate(engineCfg.maxFrameRate);
   gDrawMgr->setSDLContainers(gRsrcMgr);
 
-  if (SUCCESS != _actionEventHandler.init(
+  if (ErrorCode::SUCCESS != _actionEventHandler.init(
           std::bind(&Engine::handleEvent, this, _1))) {
     LOGERR("Error in _actionEventHandler.init()");
-    return FAILURE;
+    return ErrorCode::FAILURE;
   }
 
-  if (SUCCESS != _debugConsole.init(engineCfg.debugConsoleRsrcId,
+  if (ErrorCode::SUCCESS != _debugConsole.init(engineCfg.debugConsoleRsrcId,
           engineCfg.maxFrameRate)) {
     LOGERR("Error in _debugConsole.init()");
-    return FAILURE;
+    return ErrorCode::FAILURE;
   }
 
   _game.setInvokeActionEventCb(
@@ -58,11 +56,11 @@ int32_t Engine::init(const EngineConfig &engineCfg) {
 
   _game.setSystemShutdownCb(std::bind(&Engine::shutdown, this));
 
-  return SUCCESS;
+  return ErrorCode::SUCCESS;
 }
 
-int32_t Engine::recover() {
-  return SUCCESS;
+ErrorCode Engine::recover() {
+  return ErrorCode::SUCCESS;
 }
 
 void Engine::deinit() {
@@ -70,7 +68,7 @@ void Engine::deinit() {
   _actionEventHandler.deinit();
 }
 
-int32_t Engine::start() {
+ErrorCode Engine::start() {
   std::thread updateThread = std::thread(&Engine::mainLoop, this);
 
   //communicator will probably spawn own thread and control will return
@@ -80,7 +78,7 @@ int32_t Engine::start() {
   gDrawMgr->startRenderingLoop();
 
   updateThread.join();
-  return SUCCESS;
+  return ErrorCode::SUCCESS;
 }
 
 void Engine::shutdown() {

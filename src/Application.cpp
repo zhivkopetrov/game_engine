@@ -1,9 +1,7 @@
 //Corresponding header
 #include "game_engine/Application.h"
 
-//C system headers
-
-//C++ system headers
+//System headers
 
 //Other libraries headers
 #include "game_engine/communicator/NullCommunicator.h"
@@ -20,17 +18,17 @@ Application::~Application() noexcept {
   printUptime();
 }
 
-int32_t Application::loadDependencies(
+ErrorCode Application::loadDependencies(
     const std::vector<DependencyDescription> &dependencies) {
   _dependencies = dependencies;
   for (const auto& [name, loadDependency, unloadDependency] : _dependencies) {
-    if (SUCCESS != loadDependency()) {
+    if (ErrorCode::SUCCESS != loadDependency()) {
       LOGERR("loadDependency() failed for %s", name.c_str());
-      return FAILURE;
+      return ErrorCode::FAILURE;
     }
   }
 
-  return SUCCESS;
+  return ErrorCode::SUCCESS;
 }
 
 void Application::obtain(std::unique_ptr<Game> game,
@@ -44,33 +42,33 @@ void Application::obtain(std::unique_ptr<Game> game,
   }
 }
 
-int32_t Application::init(const ApplicationConfig &cfg) {
+ErrorCode Application::init(const ApplicationConfig &cfg) {
   _engine = std::make_unique<Engine>(*_communicator.get(), *_game.get());
 
-  if (SUCCESS != _engine->init(cfg.engineCfg)) {
+  if (ErrorCode::SUCCESS != _engine->init(cfg.engineCfg)) {
     LOGERR("Error in _engine.init()");
-    return FAILURE;
+    return ErrorCode::FAILURE;
   }
 
-  if (SUCCESS != _engine->recover()) {
+  if (ErrorCode::SUCCESS != _engine->recover()) {
     LOGERR("Error in _engine.recover()");
-    return FAILURE;
+    return ErrorCode::FAILURE;
   }
 
-  if (SUCCESS != _game->init(cfg.gameCfg)) {
+  if (ErrorCode::SUCCESS != _game->init(cfg.gameCfg)) {
     LOGERR("Error in _game.init()");
-    return FAILURE;
+    return ErrorCode::FAILURE;
   }
 
-  if (SUCCESS != _communicator->init(cfg.communicatorCfg)) {
+  if (ErrorCode::SUCCESS != _communicator->init(cfg.communicatorCfg)) {
     LOGERR("Error in _communicator.init()");
-    return FAILURE;
+    return ErrorCode::FAILURE;
   }
 
-  return SUCCESS;
+  return ErrorCode::SUCCESS;
 }
 
-int32_t Application::run() {
+ErrorCode Application::run() {
   LOGG("Starting Application");
   return _engine->start();
 }

@@ -1,13 +1,12 @@
 #ifndef GAME_ENGINE_ENGINE_H_
 #define GAME_ENGINE_ENGINE_H_
 
-//C system headers
-
-//C++ system headers
+//System headers
 #include <cstdint>
 
 //Other libraries headers
 #include "manager_utils/managers/ManagerHandler.h"
+#include "utils/ErrorCode.h"
 
 //Own components headers
 #include "game_engine/engine/config/EngineConfig.h"
@@ -23,10 +22,10 @@ class Engine {
 public:
   Engine(Communicator& communicator, Game& game);
 
-  int32_t init(const EngineConfig &engineCfg);
+  ErrorCode init(const EngineConfig &engineCfg);
   void deinit();
-  int32_t recover();
-  int32_t start();
+  ErrorCode recover();
+  ErrorCode start();
   void handleEvent(const InputEvent& e);
   void shutdown();
 
