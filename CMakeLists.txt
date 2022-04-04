@@ -8,13 +8,6 @@ project(
     VERSION 1.0.0
 )
 
-list(
-    APPEND
-    CMAKE_MODULE_PATH
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake_helpers/find_modules
-)
-include(${CMAKE_CURRENT_SOURCE_DIR}/cmake_helpers/helpers.cmake)
-
 find_package(manager_utils REQUIRED)
 
 set(_INC_FOLDER_NAME include)
