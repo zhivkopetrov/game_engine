@@ -86,7 +86,7 @@ void Application::deinit() {
 }
 
 void Application::unloadDependencies() {
-  //unload dependency in reverse order -> they might be dependant
+  //unload dependency in reverse order -> they might be dependent
   for (auto revIt = _dependencies.rbegin(); revIt != _dependencies.rend();
       ++revIt) {
     revIt->unloadDependencyCb();
