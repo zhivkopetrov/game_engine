@@ -18,7 +18,7 @@ constexpr auto MONITOR_HEIGHT = 1080;
 constexpr auto MAX_FRAME_RATE = 75;
 constexpr auto MAX_RESOURCE_LOADING_THREADS = 2;
 constexpr auto MAX_RUNTIME_TEXTS = 500;
-constexpr auto MAX_RUNTIME_SPRITE_BUFFERS = 200;
+constexpr auto MAX_RUNTIME_SPRITE_BUFFERS = 250;
 constexpr auto MAX_RUNTIME_IMAGES = 400;
 constexpr auto MAX_RUNTIME_WIDGETS = MAX_RUNTIME_TEXTS
     + MAX_RUNTIME_SPRITE_BUFFERS + MAX_RUNTIME_IMAGES;
@@ -36,6 +36,14 @@ LoadingScreenConfig generateLoadingScreenConfig(
   cfg.progressBarOffImagePath = loadingScreenFolderPath + "progressOff.png";
   return cfg;
 }
+
+DebugConsoleConfig generateDebugConsoleConfig() {
+  DebugConsoleConfig cfg;
+  cfg.textColor = Colors::RED;
+  cfg.maxFrameRate = MAX_FRAME_RATE;
+  return cfg;
+}
+
 } //end anonymous namespace
 
 EngineConfig getDefaultEngineConfig(
@@ -43,6 +51,7 @@ EngineConfig getDefaultEngineConfig(
     const std::string &loadingScreenResourcesPath) {
   EngineConfig cfg;
   cfg.maxFrameRate = MAX_FRAME_RATE;
+  cfg.debugConsoleConfig = generateDebugConsoleConfig();
 
   auto &drawMgrCfg = cfg.managerHandlerCfg.drawMgrCfg;
   auto &monitorCfg = drawMgrCfg.monitorWindowConfig;

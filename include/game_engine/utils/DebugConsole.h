@@ -12,6 +12,7 @@
 
 //Forward declarations
 class InputEvent;
+struct DebugConsoleConfig;
 
 struct DebugConsoleData {
   explicit DebugConsoleData(int64_t inputElapsedMicroSeconds,
@@ -32,7 +33,7 @@ class DebugConsole {
 public:
   DebugConsole();
 
-  ErrorCode init(const uint64_t fontRsrcId, const int64_t maxFrameRate);
+  ErrorCode init(const DebugConsoleConfig& cfg);
 
   /** @ brief used to toggle active/inactive status of the debug console
    * */

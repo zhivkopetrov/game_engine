@@ -44,8 +44,7 @@ ErrorCode Engine::init(const EngineConfig &engineCfg) {
     return ErrorCode::FAILURE;
   }
 
-  if (ErrorCode::SUCCESS != _debugConsole.init(engineCfg.debugConsoleRsrcId,
-          engineCfg.maxFrameRate)) {
+  if (ErrorCode::SUCCESS != _debugConsole.init(engineCfg.debugConsoleConfig)) {
     LOGERR("Error in _debugConsole.init()");
     return ErrorCode::FAILURE;
   }

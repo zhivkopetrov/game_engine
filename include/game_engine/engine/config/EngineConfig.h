@@ -9,12 +9,13 @@
 
 //Own components headers
 #include "game_engine/defines/DependencyDefines.h"
+#include "game_engine/utils/config/DebugConsoleConfig.h"
 
 //Forward declarations
 
 struct EngineConfig {
   ManagerHandlerConfig managerHandlerCfg;
-  uint64_t debugConsoleRsrcId = 0;
+  DebugConsoleConfig debugConsoleConfig;
   uint32_t maxFrameRate = 0;
 };
 

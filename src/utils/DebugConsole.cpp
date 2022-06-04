@@ -12,6 +12,7 @@
 #include "utils/Log.h"
 
 //Own components headers
+#include "game_engine/utils/config/DebugConsoleConfig.h"
 
 #define UPDATE_SKIPS 20
 
@@ -21,22 +22,21 @@ DebugConsole::DebugConsole()
 
 }
 
-ErrorCode DebugConsole::init(const uint64_t fontRsrcId,
-                             const int64_t maxFrameRate) {
+ErrorCode DebugConsole::init(const DebugConsoleConfig& cfg) {
   constexpr auto INITIAL_TEXT_X = 20;
   constexpr auto INITIAL_TEXT_Y = 10;
   constexpr auto TEXT_OFFSET_Y = 10;
   constexpr auto INITIAL_TEXT_CONTENT = "0";
-  _debugTexts[FPS_COUNTER].create(fontRsrcId, INITIAL_TEXT_CONTENT,
-      Colors::YELLOW, Point(INITIAL_TEXT_X, INITIAL_TEXT_Y));
+  _debugTexts[FPS_COUNTER].create(cfg.fontRsrcId, INITIAL_TEXT_CONTENT,
+      cfg.textColor, Point(INITIAL_TEXT_X, INITIAL_TEXT_Y));
 
   for (int32_t i = 1; i < DEBUG_TEXTS_COUNT; ++i) {
-    _debugTexts[i].create(fontRsrcId, INITIAL_TEXT_CONTENT, Colors::YELLOW,
+    _debugTexts[i].create(cfg.fontRsrcId, INITIAL_TEXT_CONTENT, cfg.textColor,
         Point(INITIAL_TEXT_X, (_debugTexts[i - 1].getY() +
             _debugTexts[i - 1].getCroppedFrameHeight()) + TEXT_OFFSET_Y));
   }
 
-  _maxFrames = maxFrameRate;
+  _maxFrames = cfg.maxFrameRate;
 
   return ErrorCode::SUCCESS;
 }
