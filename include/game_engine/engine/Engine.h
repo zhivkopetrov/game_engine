@@ -36,9 +36,15 @@ private:
   void processEvents(int64_t frameElapsedMicroseconds);
   void populateDebugConsole(int64_t frameElapsedMicroseconds);
 
+  struct FpsCounter {
+    uint64_t totalFrames { };
+    uint64_t delayedFrames { };
+  };
+
   ManagerHandler _managerHandler;
   ActionEventHandler _actionEventHandler;
   DebugConsole _debugConsole;
+  FpsCounter _fpsCounter;
 
   Communicator& _communicator;
   Game& _game;

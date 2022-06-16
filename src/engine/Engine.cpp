@@ -86,6 +86,11 @@ void Engine::shutdown() {
   _communicator.shutdown();
   _actionEventHandler.shutdown();
   gDrawMgr->shutdownRenderer();
+
+  const double delayedFramesPercent =
+      (100.0 * _fpsCounter.delayedFrames) / _fpsCounter.totalFrames;
+  LOG("Engine Statistics: [Delayed Frames\\All frames]: [%lu\\%lu] - %.2f%%",
+      _fpsCounter.delayedFrames, _fpsCounter.totalFrames, delayedFramesPercent);
 }
 
 void Engine::mainLoop() {
@@ -98,6 +103,7 @@ void Engine::mainLoop() {
 
   while (_isActive) {
     fpsTime.getElapsed(); //begin measure the new frame elapsed time
+    ++_fpsCounter.totalFrames;
 
     process();
     drawFrame();
@@ -147,9 +153,12 @@ void Engine::processEvents(int64_t frameElapsedMicroseconds) {
       - frameElapsedMicroseconds;
 
   if (0 >= frameTimeLeftMicroseconds) {
+    ++_fpsCounter.delayedFrames;
+
     //TODO figure out why alt-tab fullscreen is causing false-positive
-    LOGY("Warning, FPS drop. Frame delayed with: (%ld us). No events will be "
-        "processed on this frame", (-1 * frameTimeLeftMicroseconds));
+    LOGY("Warning, FPS drop. Frame [%lu] delayed with: (%ld us). No action "
+         "events will be processed on this frame", _fpsCounter.totalFrames,
+         (-1 * frameTimeLeftMicroseconds));
     return;
   }
 
