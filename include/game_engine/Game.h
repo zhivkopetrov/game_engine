@@ -7,12 +7,15 @@
 #include <functional>
 
 //Other libraries headers
+#include "sdl_utils/drawing/defines/DrawConstants.h"
 #include "utils/class/NonCopyable.h"
 #include "utils/class/NonMoveable.h"
 #include "utils/ErrorCode.h"
 
 //Own components headers
+#include "game_engine/defines/GameUtilityDefines.h"
 #include "game_engine/defines/ActionEventDefines.h"
+
 
 //Forward declarations
 class InputEvent;
@@ -39,9 +42,14 @@ public:
     _systemShutdownCb = cb;
   }
 
+  void setTakeScreenshotCb(const TakeScreenshotCb& cb) {
+    _takeScreenshotCb = cb;
+  }
+
 protected:
   InvokeActionEventCb _invokeActionEventCb;
   SystemShutdownCb _systemShutdownCb;
+  TakeScreenshotCb _takeScreenshotCb;
 };
 
 #endif /* GAME_ENGINE_GAME_H_ */

@@ -55,6 +55,9 @@ ErrorCode Engine::init(const EngineConfig &engineCfg) {
 
   _game.setSystemShutdownCb(std::bind(&Engine::shutdown, this));
 
+  _game.setTakeScreenshotCb(
+      std::bind(&DrawMgr::takeScreenshot, gDrawMgr, _1, _2, _3));
+
   return ErrorCode::SUCCESS;
 }
 
@@ -87,8 +90,8 @@ void Engine::shutdown() {
   _actionEventHandler.shutdown();
   gDrawMgr->shutdownRenderer();
 
-  const double delayedFramesPercent =
-      (100.0 * _fpsCounter.delayedFrames) / _fpsCounter.totalFrames;
+  const double delayedFramesPercent = (100.0 * _fpsCounter.delayedFrames)
+      / _fpsCounter.totalFrames;
   LOG("Engine Statistics: [Delayed Frames\\All frames]: [%lu\\%lu] - %.2f%%",
       _fpsCounter.delayedFrames, _fpsCounter.totalFrames, delayedFramesPercent);
 }
@@ -156,9 +159,9 @@ void Engine::processEvents(int64_t frameElapsedMicroseconds) {
     ++_fpsCounter.delayedFrames;
 
     //TODO figure out why alt-tab fullscreen is causing false-positive
-    LOGY("Warning, FPS drop. Frame [%lu] delayed with: (%ld us). No action "
-         "events will be processed on this frame", _fpsCounter.totalFrames,
-         (-1 * frameTimeLeftMicroseconds));
+    LOGY(
+        "Warning, FPS drop. Frame [%lu] delayed with: (%ld us). No action " "events will be processed on this frame",
+        _fpsCounter.totalFrames, (-1 * frameTimeLeftMicroseconds));
     return;
   }
 
