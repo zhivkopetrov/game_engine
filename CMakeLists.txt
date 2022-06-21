@@ -25,7 +25,6 @@ add_library(
         ${_INC_DIR}/engine/Engine.h
         ${_INC_DIR}/defines/ActionEventDefines.h
         ${_INC_DIR}/defines/DependencyDefines.h
-        ${_INC_DIR}/defines/GameUtilityDefines.h
         ${_INC_DIR}/event_handler/ActionEventHandler.h
         ${_INC_DIR}/utils/config/DebugConsoleConfig.h
         ${_INC_DIR}/utils/DebugConsole.h

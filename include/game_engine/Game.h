@@ -13,8 +13,8 @@
 #include "utils/ErrorCode.h"
 
 //Own components headers
-#include "game_engine/defines/GameUtilityDefines.h"
 #include "game_engine/defines/ActionEventDefines.h"
+#include "sdl_utils/drawing/defines/DrawUtilityDefines.h"
 
 
 //Forward declarations
