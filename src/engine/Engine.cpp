@@ -71,10 +71,10 @@ void Engine::deinit() {
 }
 
 ErrorCode Engine::start() {
-  std::thread updateThread = std::thread(&Engine::mainLoop, this);
-
   //communicator will probably spawn own thread and control will return
   _communicator.start();
+
+  std::thread updateThread = std::thread(&Engine::mainLoop, this);
 
   //blocking call
   gDrawMgr->startRenderingLoop();
@@ -97,13 +97,9 @@ void Engine::shutdown() {
 }
 
 void Engine::mainLoop() {
-  //give some time to the main(rendering thread) to enter it's drawing loop
-  using namespace std::literals;
-  std::this_thread::sleep_for(2ms);
+  mainLoopPrepare();
+
   Time fpsTime;
-
-  gTimerMgr->onInitEnd();
-
   while (_isActive) {
     fpsTime.getElapsed(); //begin measure the new frame elapsed time
     ++_fpsCounter.totalFrames;
@@ -118,6 +114,24 @@ void Engine::mainLoop() {
 
     processEvents(elapsedMiscroSeconds);
   }
+}
+
+void Engine::mainLoopPrepare() {
+  Time time;
+  //give some time to the main(rendering thread) to enter it's drawing loop
+  using namespace std::literals;
+  std::this_thread::sleep_for(2ms);
+
+  //manually swap the rendering back buffer in order to process all stored
+  //renderer commands during initialization before the main loop is started
+  gDrawMgr->finishFrame(); //load the stored renderer commands in the renderer
+  gDrawMgr->finishFrame(); //wait for the commands to execute
+
+  //base point for all timers started during initialization
+  gTimerMgr->onInitEnd();
+
+  LOG("Engine mainLoopPrepare() took: [%ld ms]",
+      time.getElapsed().toMilliseconds());
 }
 
 void Engine::process() {

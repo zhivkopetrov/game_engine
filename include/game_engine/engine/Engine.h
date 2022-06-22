@@ -31,6 +31,7 @@ public:
 
 private:
   void mainLoop();
+  void mainLoopPrepare();
   void process(); //called once per frame
   void drawFrame();
   void processEvents(int64_t frameElapsedMicroseconds);
