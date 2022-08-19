@@ -3,6 +3,7 @@
 
 //System headers
 #include <future>
+#include <memory>
 
 //Other libraries headers
 #include "utils/data_type/EnumClassUtils.h"
@@ -122,10 +123,13 @@ void ActionEventHandler::pollInputEvents() {
 }
 
 void ActionEventHandler::invokeBlockingEvent(const ActionEventCb &cb) {
-  std::packaged_task<void()> task(cb);
-  auto future = task.get_future();
-  auto f = [&task](){
-    task();
+  //NOTE: keep task alive, because otherwise it could lead the
+  //      invoking thread with dangling reference to local object
+  auto task = std::make_shared<std::packaged_task<void()>>(cb);
+
+  auto future = task->get_future();
+  auto f = [task](){
+    (*task)();
   };
   _eventQueue.push(std::move(f));
 
