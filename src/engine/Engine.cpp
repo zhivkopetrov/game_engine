@@ -173,8 +173,8 @@ void Engine::processEvents(int64_t frameElapsedMicroseconds) {
     ++_fpsCounter.delayedFrames;
 
     //TODO figure out why alt-tab fullscreen is causing false-positive
-    LOGY(
-        "Warning, FPS drop. Frame [%lu] delayed with: (%ld us). No action " "events will be processed on this frame",
+    LOGY("Warning, FPS drop. Frame [%lu] delayed with: (%ld us). No action "
+         "events will be processed on this frame",
         _fpsCounter.totalFrames, (-1 * frameTimeLeftMicroseconds));
     return;
   }

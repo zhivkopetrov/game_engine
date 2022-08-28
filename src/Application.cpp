@@ -55,13 +55,13 @@ ErrorCode Application::init(const ApplicationConfig &cfg) {
     return ErrorCode::FAILURE;
   }
 
-  if (ErrorCode::SUCCESS != _game->init(cfg.gameCfg)) {
-    LOGERR("Error in _game.init()");
+  if (ErrorCode::SUCCESS != _communicator->init(cfg.communicatorCfg)) {
+    LOGERR("Error in _communicator.init()");
     return ErrorCode::FAILURE;
   }
 
-  if (ErrorCode::SUCCESS != _communicator->init(cfg.communicatorCfg)) {
-    LOGERR("Error in _communicator.init()");
+  if (ErrorCode::SUCCESS != _game->init(cfg.gameCfg)) {
+    LOGERR("Error in _game.init()");
     return ErrorCode::FAILURE;
   }
 
@@ -74,12 +74,12 @@ ErrorCode Application::run() {
 }
 
 void Application::deinit() {
+  _game->deinit();
+  _game.reset();
+
   //manually reset point after deinit to enforce destruction order
   _communicator->deinit();
   _communicator.reset();
-
-  _game->deinit();
-  _game.reset();
 
   _engine->deinit();
   _engine.reset();
