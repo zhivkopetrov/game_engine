@@ -86,7 +86,6 @@ ErrorCode Engine::start() {
 void Engine::shutdown() {
   LOGG("Initiating shutdown...");
   _isActive = false;
-  _communicator.shutdown();
   _actionEventHandler.shutdown();
   gDrawMgr->shutdownRenderer();
 
