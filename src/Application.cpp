@@ -22,7 +22,14 @@ ErrorCode Application::loadDependencies(
     const std::vector<DependencyDescription> &dependencies) {
   _dependencies = dependencies;
   for (const auto& [name, loadDependency, unloadDependency] : _dependencies) {
-    if (ErrorCode::SUCCESS != loadDependency()) {
+    LOG_ON_SAME_LINE("Loading dependency '%s' ... [", name.c_str());
+    const ErrorCode errCode = loadDependency();
+    if (ErrorCode::SUCCESS == errCode) {
+      LOGG_ON_SAME_LINE("SUCCESS");
+      LOG("]");
+    } else {
+      LOGR_ON_SAME_LINE("FAIL");
+      LOG("]");
       LOGERR("loadDependency() failed for %s", name.c_str());
       return ErrorCode::FAILURE;
     }
@@ -89,6 +96,10 @@ void Application::unloadDependencies() {
   //unload dependency in reverse order -> they might be dependent
   for (auto revIt = _dependencies.rbegin(); revIt != _dependencies.rend();
       ++revIt) {
+    LOG_ON_SAME_LINE("Unloading dependency '%s' ... [", revIt->name.c_str());
+    LOGG_ON_SAME_LINE("SUCCESS");
+    LOG("]");
+
     revIt->unloadDependencyCb();
   }
 }

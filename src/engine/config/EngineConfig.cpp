@@ -24,8 +24,9 @@ constexpr auto MAX_RUNTIME_WIDGETS = MAX_RUNTIME_TEXTS
     + MAX_RUNTIME_SPRITE_BUFFERS + MAX_RUNTIME_IMAGES;
 constexpr auto MAX_RUNTIME_RENDERER_COMMANDS = MAX_RUNTIME_WIDGETS * 2;
 //65k bytes
-constexpr auto MAX_RENDERER_BACK_BUFFER_DATA_SIZE =
-    std::numeric_limits<uint16_t>::max();
+constexpr auto MAX_RENDERER_BACK_BUFFER_DATA_SIZE = std::numeric_limits
+    < uint16_t
+                                                    > ::max();
 
 LoadingScreenConfig generateLoadingScreenConfig(
     const std::string &loadingScreenFolderPath) {
@@ -88,8 +89,13 @@ EngineConfig getDefaultEngineConfig(
 
 std::vector<DependencyDescription> getDefaultEngineDependencies(
     [[maybe_unused]]int32_t argc, [[maybe_unused]]char **args) {
-  const DependencyDescription sdlDependencies
-    { "SDL2", SDLLoader::init, SDLLoader::deinit };
-  return { sdlDependencies };
+  const std::vector<DependencyDescription> dependencies {
+    { "SDL2", SDLLoader::initSdl2, SDLLoader::deinitSdl2 },
+    { "SDL2-image", SDLLoader::initSdl2Image, SDLLoader::deinitSdl2Image },
+    { "SDL2-ttf", SDLLoader::initSdl2Ttf, SDLLoader::deinitSdl2Ttf },
+    { "SDL2-mixer", SDLLoader::initSdl2Mixer, SDLLoader::deinitSdl2Mixer }
+  };
+
+  return dependencies;
 }
 
