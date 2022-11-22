@@ -4,8 +4,9 @@
 //System headers
 
 //Other libraries headers
-#include "resource_utils/common/ResourceFileHeader.h"
 #include "sdl_utils/SDLLoader.h"
+#include "sdl_utils/drawing/config/RendererConfig.h"
+#include "resource_utils/common/ResourceFileHeader.h"
 #include "utils/file_system/FileSystemUtils.h"
 
 //Own components headers
@@ -63,6 +64,7 @@ EngineConfig getDefaultEngineConfig(
   monitorCfg.borderMode = windowBorderMode;
 
   auto &rendererCfg = drawMgrCfg.rendererConfig;
+  rendererCfg.executionPolicy = RendererPolicy::MULTI_THREADED;
   rendererCfg.maxRuntimeRendererCommands = MAX_RUNTIME_RENDERER_COMMANDS;
   rendererCfg.maxRuntimeWidgets = MAX_RUNTIME_WIDGETS;
   rendererCfg.maxRendererBackBufferDataSize =

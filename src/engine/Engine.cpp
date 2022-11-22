@@ -18,6 +18,8 @@
 #include "game_engine/communicator/Communicator.h"
 #include "game_engine/Game.h"
 
+using namespace std::literals;
+
 Engine::Engine(Communicator &communicator, Game &game)
     : _communicator(communicator), _game(game) {
 
@@ -71,15 +73,26 @@ void Engine::deinit() {
 }
 
 ErrorCode Engine::start() {
-  //communicator will probably spawn own thread and control will return
+  //communicator will spawn own thread and control will return
   _communicator.start();
 
-  std::thread updateThread = std::thread(&Engine::mainLoop, this);
+  const RendererPolicy rendererPolicy = gDrawMgr->getRendererPolicy();
+  if (RendererPolicy::SINGLE_THREADED == rendererPolicy) {
+    LOG("Using SINGLE_THREADED Renderer execution policy");
+    //blocking call
+    mainLoop();
+  } else {
+    LOG("Using MULTI_THREADED Renderer execution policy");
+    std::thread updateThread = std::thread(&Engine::mainLoop, this);
 
-  //blocking call
-  gDrawMgr->startRenderingLoop();
+    /** Blocking call.
+      * Rendering operations MUST be performed on the main thread
+      * to guarantee cross-platform support */
+    gDrawMgr->startRenderingLoop();
 
-  updateThread.join();
+    updateThread.join();
+  }
+
   return ErrorCode::SUCCESS;
 }
 
@@ -118,7 +131,6 @@ void Engine::mainLoop() {
 void Engine::mainLoopPrepare() {
   Time time;
   //give some time to the main(rendering thread) to enter it's drawing loop
-  using namespace std::literals;
   std::this_thread::sleep_for(2ms);
 
   //manually swap the rendering back buffer in order to process all stored
@@ -172,9 +184,12 @@ void Engine::processEvents(int64_t frameElapsedMicroseconds) {
     ++_fpsCounter.delayedFrames;
 
     //TODO figure out why alt-tab fullscreen is causing false-positive
-    LOGY("Warning, FPS drop. Frame [%lu] delayed with: (%ld us). No action "
-         "events will be processed on this frame",
+    LOGY("Warning, FPS drop. Frame [%lu] delayed with: (%ld us). "
+         "Will process actions events only for 1000us this frame",
         _fpsCounter.totalFrames, (-1 * frameTimeLeftMicroseconds));
+
+    //process events for 1000 us, even though frame is lagging behind
+    _actionEventHandler.processStoredEvents(1000us);
     return;
   }
 
