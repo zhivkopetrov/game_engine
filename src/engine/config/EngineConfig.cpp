@@ -8,6 +8,7 @@
 #include "sdl_utils/drawing/config/RendererConfig.h"
 #include "resource_utils/common/ResourceFileHeader.h"
 #include "utils/file_system/FileSystemUtils.h"
+#include "utils/data_type/EnumClassUtils.h"
 
 //Own components headers
 
@@ -25,9 +26,8 @@ constexpr auto MAX_RUNTIME_WIDGETS = MAX_RUNTIME_TEXTS
     + MAX_RUNTIME_SPRITE_BUFFERS + MAX_RUNTIME_IMAGES;
 constexpr auto MAX_RUNTIME_RENDERER_COMMANDS = MAX_RUNTIME_WIDGETS * 2;
 //65k bytes
-constexpr auto MAX_RENDERER_BACK_BUFFER_DATA_SIZE = std::numeric_limits
-    < uint16_t
-                                                    > ::max();
+constexpr auto MAX_RENDERER_BACK_BUFFER_DATA_SIZE =
+    std::numeric_limits<uint16_t>::max();
 
 LoadingScreenConfig generateLoadingScreenConfig(
     const std::string &loadingScreenFolderPath) {
@@ -65,6 +65,9 @@ EngineConfig getDefaultEngineConfig(
 
   auto &rendererCfg = drawMgrCfg.rendererConfig;
   rendererCfg.executionPolicy = RendererPolicy::MULTI_THREADED;
+  rendererCfg.flagsMask = getEnumValue(RendererFlag::HARDWARE_RENDERER) |
+      getEnumValue(RendererFlag::FBO_ENABLE);
+  rendererCfg.scaleQuality = RendererScaleQuality::LINEAR;
   rendererCfg.maxRuntimeRendererCommands = MAX_RUNTIME_RENDERER_COMMANDS;
   rendererCfg.maxRuntimeWidgets = MAX_RUNTIME_WIDGETS;
   rendererCfg.maxRendererBackBufferDataSize =
@@ -91,12 +94,11 @@ EngineConfig getDefaultEngineConfig(
 
 std::vector<DependencyDescription> getDefaultEngineDependencies(
     [[maybe_unused]]int32_t argc, [[maybe_unused]]char **args) {
-  const std::vector<DependencyDescription> dependencies {
-    { "SDL2", SDLLoader::initSdl2, SDLLoader::deinitSdl2 },
-    { "SDL2-image", SDLLoader::initSdl2Image, SDLLoader::deinitSdl2Image },
-    { "SDL2-ttf", SDLLoader::initSdl2Ttf, SDLLoader::deinitSdl2Ttf },
-    { "SDL2-mixer", SDLLoader::initSdl2Mixer, SDLLoader::deinitSdl2Mixer }
-  };
+  const std::vector<DependencyDescription> dependencies { { "SDL2",
+      SDLLoader::initSdl2, SDLLoader::deinitSdl2 }, { "SDL2-image",
+      SDLLoader::initSdl2Image, SDLLoader::deinitSdl2Image }, { "SDL2-ttf",
+      SDLLoader::initSdl2Ttf, SDLLoader::deinitSdl2Ttf }, { "SDL2-mixer",
+      SDLLoader::initSdl2Mixer, SDLLoader::deinitSdl2Mixer } };
 
   return dependencies;
 }
