@@ -2,6 +2,7 @@
 #include "game_engine/engine/config/EngineConfig.h"
 
 //System headers
+#include <limits>
 
 //Other libraries headers
 #include "sdl_utils/SDLLoader.h"
