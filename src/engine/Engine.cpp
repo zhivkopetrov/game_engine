@@ -104,7 +104,7 @@ void Engine::shutdown() {
 
   const double delayedFramesPercent = (100.0 * _fpsCounter.delayedFrames)
       / _fpsCounter.totalFrames;
-  LOG("Engine Statistics: [Delayed Frames\\All frames]: [%lu\\%lu] - %.2f%%",
+  LOG("Engine Statistics: [Delayed Frames\\All frames]: [%zu\\%zu] - %.2f%%",
       _fpsCounter.delayedFrames, _fpsCounter.totalFrames, delayedFramesPercent);
 }
 
@@ -184,7 +184,7 @@ void Engine::processEvents(int64_t frameElapsedMicroseconds) {
     ++_fpsCounter.delayedFrames;
 
     //TODO figure out why alt-tab fullscreen is causing false-positive
-    LOGY("Warning, FPS drop. Frame [%lu] delayed with: (%ld us). "
+    LOGY("Warning, FPS drop. Frame [%zu] delayed with: (%ld us). "
          "Will process actions events only for 1000us this frame",
         _fpsCounter.totalFrames, (-1 * frameTimeLeftMicroseconds));
 
