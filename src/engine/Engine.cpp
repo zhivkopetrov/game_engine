@@ -141,7 +141,7 @@ void Engine::mainLoopPrepare() {
   //base point for all timers started during initialization
   gTimerMgr->onInitEnd();
 
-  LOG("Engine mainLoopPrepare() took: [%ld ms]",
+  LOG("Engine mainLoopPrepare() took: [%" PRId64" ms]",
       time.getElapsed().toMilliseconds());
 }
 
@@ -184,7 +184,7 @@ void Engine::processEvents(int64_t frameElapsedMicroseconds) {
     ++_fpsCounter.delayedFrames;
 
     //TODO figure out why alt-tab fullscreen is causing false-positive
-    LOGY("Warning, FPS drop. Frame [%zu] delayed with: (%ld us). "
+    LOGY("Warning, FPS drop. Frame [%zu] delayed with: (%" PRId64" us). "
          "Will process actions events only for 1000us this frame",
         _fpsCounter.totalFrames, (-1 * frameTimeLeftMicroseconds));
 

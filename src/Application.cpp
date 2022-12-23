@@ -118,7 +118,8 @@ void Application::printUptime() {
 
   const auto elapsedSeconds = remainingSeconds;
 
-  LOG("Total Application uptime: Hours: %ld, Minutes: %ld, Seconds: %ld\n",
+  LOG("Total Application uptime: Hours: "
+      "%" PRId64", Minutes: %" PRId64", Seconds: %" PRId64"\n",
       elapsedHours, elapsedMinutes, elapsedSeconds);
 }
 
