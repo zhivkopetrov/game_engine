@@ -16,6 +16,7 @@
 namespace {
 constexpr auto windowDisplayMode = WindowDisplayMode::FULL_SCREEN;
 constexpr auto windowBorderMode = WindowBorderMode::BORDERLESS;
+constexpr auto MAX_FRAME_RATE = 60;
 constexpr auto MONITOR_WIDTH = 1920;
 constexpr auto MONITOR_HEIGHT = 1080;
 constexpr auto MAX_RUNTIME_TEXTS = 500;
@@ -31,15 +32,11 @@ constexpr auto MAX_RENDERER_BACK_BUFFER_DATA_SIZE =
 #ifdef __EMSCRIPTEN__
 //emscripten port currently requires single-threaded usage on the
 //whole application level
-
-//use browser’s requestAnimationFrame mechanism
-constexpr auto MAX_FRAME_RATE = 0;
 constexpr auto MAX_RESOURCE_LOADING_THREADS = 0;
 constexpr auto RENDERER_POLICY = RendererPolicy::SINGLE_THREADED;
 constexpr auto INPUT_EVENT_HANDLER_POLICY = 
   InputEventHandlerPolicy::POLL_BLOCKING;
 #else
-constexpr auto MAX_FRAME_RATE = 60;
 constexpr auto MAX_RESOURCE_LOADING_THREADS = 2;
 constexpr auto RENDERER_POLICY = RendererPolicy::MULTI_THREADED;
 constexpr auto INPUT_EVENT_HANDLER_POLICY = 
