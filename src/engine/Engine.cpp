@@ -5,6 +5,10 @@
 #include <string>
 #include <chrono>
 
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
+
 //Other libraries headers
 #include "manager_utils/managers/DrawMgr.h"
 #include "manager_utils/managers/RsrcMgr.h"
@@ -25,7 +29,7 @@ Engine::Engine(Communicator &communicator, Game &game)
 
 }
 
-ErrorCode Engine::init(const EngineConfig &engineCfg) {
+ErrorCode Engine::init(const EngineConfig &cfg) {
   using namespace std::placeholders;
 
   if (ErrorCode::SUCCESS != Rng::getInstance().init()) {
@@ -33,30 +37,37 @@ ErrorCode Engine::init(const EngineConfig &engineCfg) {
     return ErrorCode::FAILURE;
   }
 
-  if (ErrorCode::SUCCESS != _managerHandler.init(engineCfg.managerHandlerCfg)) {
+  if (ErrorCode::SUCCESS != _managerHandler.init(cfg.managerHandlerCfg)) {
     LOGERR("Error in _managerHandler.init()");
     return ErrorCode::FAILURE;
   }
-  gDrawMgr->setMaxFrameRate(engineCfg.maxFrameRate);
+  gDrawMgr->setMaxFrameRate(cfg.maxFrameRate);
   gDrawMgr->setSDLContainers(gRsrcMgr);
 
-  if (ErrorCode::SUCCESS != _actionEventHandler.init(
-          std::bind(&Engine::handleEvent, this, _1))) {
-    LOGERR("Error in _actionEventHandler.init()");
-    return ErrorCode::FAILURE;
-  }
-
-  if (ErrorCode::SUCCESS != _debugConsole.init(engineCfg.debugConsoleConfig)) {
+  if (ErrorCode::SUCCESS != _debugConsole.init(cfg.debugConsoleConfig)) {
     LOGERR("Error in _debugConsole.init()");
     return ErrorCode::FAILURE;
   }
 
-  _game.setInvokeActionEventCb(
-      std::bind(&ActionEventHandler::invokeActionEvent, &_actionEventHandler,
-          _1, _2));
+  if (ErrorCode::SUCCESS != _actionEventHandler.init()) {
+    LOGERR("Error in _actionEventHandler.init()");
+    return ErrorCode::FAILURE;
+  }
 
+  const InvokeActionEventCb invokeActionEventCb = 
+    std::bind(&ActionEventHandler::invokeActionEvent, &_actionEventHandler,
+          _1, _2);
+  const HandleInputEventCb handleInputEventCb = 
+    std::bind(&Engine::handleEvent, this, _1);
+
+  if (ErrorCode::SUCCESS != _inputEventHandler.init(
+      cfg.inputEventHandlerPolicy, invokeActionEventCb, handleInputEventCb)) {
+    LOGERR("Error in _inputEventHandler.init()");
+    return ErrorCode::FAILURE;
+  }
+
+  _game.setInvokeActionEventCb(invokeActionEventCb);
   _game.setSystemShutdownCb(std::bind(&Engine::shutdown, this));
-
   _game.setTakeScreenshotCb(
       std::bind(&DrawMgr::takeScreenshot, gDrawMgr, _1, _2, _3));
 
@@ -69,6 +80,7 @@ ErrorCode Engine::recover() {
 
 void Engine::deinit() {
   _managerHandler.deinit();
+  _inputEventHandler.deinit();
   _actionEventHandler.deinit();
 }
 
@@ -99,18 +111,39 @@ ErrorCode Engine::start() {
 void Engine::shutdown() {
   LOGG("Initiating shutdown...");
   _isActive = false;
+  _inputEventHandler.shutdown();
   _actionEventHandler.shutdown();
   gDrawMgr->shutdownRenderer();
 
   const double delayedFramesPercent = (100.0 * _fpsCounter.delayedFrames)
       / _fpsCounter.totalFrames;
-  LOG("Engine Statistics: [Delayed Frames\\All frames]: [%zu\\%zu] - %.2f%%",
+  LOG("Engine Statistics: [Delayed Frames\\All frames]: [%" PRIu64"\\%" PRIu64"] - %.2f%%",
       _fpsCounter.delayedFrames, _fpsCounter.totalFrames, delayedFramesPercent);
+
+#ifdef __EMSCRIPTEN__
+  emscripten_cancel_main_loop();
+#endif
 }
 
 void Engine::mainLoop() {
   mainLoopPrepare();
 
+  #ifdef __EMSCRIPTEN__
+    const int32_t requestedFPS = 
+      static_cast<int32_t>(gDrawMgr->getMaxFrameRate());
+    constexpr bool simulateInfiniteLoop = true;
+    void* userData = this;
+
+    emscripten_set_main_loop_arg([](void* userData){
+      Engine& engine = *static_cast<Engine*>(userData);
+      engine.mainLoopInternal();
+    }, userData, requestedFPS, simulateInfiniteLoop);
+#else
+  mainLoopInternal();
+#endif
+}
+
+void Engine::mainLoopInternal() {
   Time fpsTime;
   while (_isActive) {
     fpsTime.getElapsed(); //begin measure the new frame elapsed time
@@ -147,6 +180,7 @@ void Engine::mainLoopPrepare() {
 
 void Engine::process() {
   _managerHandler.process();
+  _inputEventHandler.process();
   _game.process();
 }
 
@@ -184,7 +218,7 @@ void Engine::processEvents(int64_t frameElapsedMicroseconds) {
     ++_fpsCounter.delayedFrames;
 
     //TODO figure out why alt-tab fullscreen is causing false-positive
-    LOGY("Warning, FPS drop. Frame [%zu] delayed with: (%" PRId64" us). "
+    LOGY("Warning, FPS drop. Frame [%" PRIu64"] delayed with: (%" PRId64" us). "
          "Will process actions events only for 1000us this frame",
         _fpsCounter.totalFrames, (-1 * frameTimeLeftMicroseconds));
 
@@ -205,4 +239,3 @@ void Engine::populateDebugConsole(int64_t frameElapsedMicroseconds) {
 
   _debugConsole.update(debugData);
 }
-

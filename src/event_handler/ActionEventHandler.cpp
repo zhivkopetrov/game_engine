@@ -15,31 +15,12 @@
 
 using namespace std::literals;
 
-ErrorCode ActionEventHandler::init(
-    const HandleInputEventCb &handleInputEventCb) {
-  if (ErrorCode::SUCCESS != _inputEventGenerator.init()) {
-    LOGERR("Error in _inputEventGenerator.init()");
-    return ErrorCode::FAILURE;
-  }
-
-  if (nullptr == handleInputEventCb) {
-    LOGERR("Error, nullptr provided for HandleInputEventCb");
-    return ErrorCode::FAILURE;
-  }
-  _handleInputEventCb = handleInputEventCb;
-
-  _pollInputEventsThread = std::thread(&ActionEventHandler::pollInputEvents,
-      this);
-
+ErrorCode ActionEventHandler::init() {
   return ErrorCode::SUCCESS;
 }
 
 void ActionEventHandler::deinit() {
-  //wait for the thread to join before deinit of the InputEventGenerator
-  //or the generator may access the deinitilized object
-  _pollInputEventsThread.join();
 
-  _inputEventGenerator.deinit();
 }
 
 void ActionEventHandler::shutdown() {
@@ -97,29 +78,6 @@ bool ActionEventHandler::processSingleEvent(
   cb();
   shouldStop = false;
   return shouldStop;
-}
-
-void ActionEventHandler::pollInputEvents() {
-  while (true) { //main loop
-    while (true) { //poll events loop
-      if (!_isActive) {
-        return;
-      }
-
-      const auto outcome = _inputEventGenerator.pollEvent();
-      if (!outcome.hasEvent) {
-        break;
-      }
-
-      const auto f = [this, outcome]() {
-        _handleInputEventCb(outcome.event);
-      };
-
-      invokeActionEvent(f, ActionEventType::NON_BLOCKING);
-    } //end pool events loop
-
-    std::this_thread::sleep_for(1ms);
-  } //end main loop
 }
 
 void ActionEventHandler::invokeBlockingEvent(const ActionEventCb &cb) {

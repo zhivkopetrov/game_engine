@@ -18,8 +18,6 @@ constexpr auto windowDisplayMode = WindowDisplayMode::FULL_SCREEN;
 constexpr auto windowBorderMode = WindowBorderMode::BORDERLESS;
 constexpr auto MONITOR_WIDTH = 1920;
 constexpr auto MONITOR_HEIGHT = 1080;
-constexpr auto MAX_FRAME_RATE = 60;
-constexpr auto MAX_RESOURCE_LOADING_THREADS = 2;
 constexpr auto MAX_RUNTIME_TEXTS = 500;
 constexpr auto MAX_RUNTIME_SPRITE_BUFFERS = 250;
 constexpr auto MAX_RUNTIME_IMAGES = 400;
@@ -29,6 +27,24 @@ constexpr auto MAX_RUNTIME_RENDERER_COMMANDS = MAX_RUNTIME_WIDGETS * 2;
 //65k bytes
 constexpr auto MAX_RENDERER_BACK_BUFFER_DATA_SIZE =
     std::numeric_limits<uint16_t>::max();
+
+#ifdef __EMSCRIPTEN__
+//emscripten port currently requires single-threaded usage on the
+//whole application level
+
+//use browser’s requestAnimationFrame mechanism
+constexpr auto MAX_FRAME_RATE = 0;
+constexpr auto MAX_RESOURCE_LOADING_THREADS = 0;
+constexpr auto RENDERER_POLICY = RendererPolicy::SINGLE_THREADED;
+constexpr auto INPUT_EVENT_HANDLER_POLICY = 
+  InputEventHandlerPolicy::POLL_BLOCKING;
+#else
+constexpr auto MAX_FRAME_RATE = 60;
+constexpr auto MAX_RESOURCE_LOADING_THREADS = 2;
+constexpr auto RENDERER_POLICY = RendererPolicy::MULTI_THREADED;
+constexpr auto INPUT_EVENT_HANDLER_POLICY = 
+  InputEventHandlerPolicy::RUN_IN_DEDICATED_THREAD;
+#endif
 
 LoadingScreenConfig generateLoadingScreenConfig(
     const std::string &loadingScreenFolderPath) {
@@ -54,6 +70,7 @@ EngineConfig getDefaultEngineConfig(
     const std::string &loadingScreenResourcesPath) {
   EngineConfig cfg;
   cfg.maxFrameRate = MAX_FRAME_RATE;
+  cfg.inputEventHandlerPolicy = INPUT_EVENT_HANDLER_POLICY;
   cfg.debugConsoleConfig = generateDebugConsoleConfig();
 
   auto &drawMgrCfg = cfg.managerHandlerCfg.drawMgrCfg;
@@ -65,7 +82,7 @@ EngineConfig getDefaultEngineConfig(
   monitorCfg.borderMode = windowBorderMode;
 
   auto &rendererCfg = drawMgrCfg.rendererConfig;
-  rendererCfg.executionPolicy = RendererPolicy::MULTI_THREADED;
+  rendererCfg.executionPolicy = RENDERER_POLICY;
   rendererCfg.flagsMask = getEnumValue(RendererFlag::HARDWARE_RENDERER) |
       getEnumValue(RendererFlag::FBO_ENABLE);
   rendererCfg.scaleQuality = RendererScaleQuality::LINEAR;

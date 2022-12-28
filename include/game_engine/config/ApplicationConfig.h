@@ -3,7 +3,6 @@
 
 //System headers
 #include <cstdint>
-#include <vector>
 #include <any>
 
 //Other libraries headers

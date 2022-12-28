@@ -10,6 +10,8 @@
 //Own components headers
 #include "game_engine/defines/DependencyDefines.h"
 #include "game_engine/utils/config/DebugConsoleConfig.h"
+#include "game_engine/defines/ActionEventDefines.h"
+#include "game_engine/defines/InputEventDefines.h"
 
 //Forward declarations
 
@@ -17,6 +19,9 @@ struct EngineConfig {
   ManagerHandlerConfig managerHandlerCfg;
   DebugConsoleConfig debugConsoleConfig;
   uint32_t maxFrameRate = 0;
+
+  InputEventHandlerPolicy inputEventHandlerPolicy = 
+    InputEventHandlerPolicy::POLL_BLOCKING;
 };
 
 EngineConfig getDefaultEngineConfig(

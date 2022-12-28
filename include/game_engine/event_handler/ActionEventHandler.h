@@ -3,11 +3,9 @@
 
 //System headers
 #include <cstdint>
-#include <thread>
 #include <atomic>
 
 //Other libraries headers
-#include "sdl_utils/input/InputEventGenerator.h"
 #include "utils/concurrency/ThreadSafeQueue.h"
 #include "utils/ErrorCode.h"
 
@@ -18,7 +16,7 @@
 
 class ActionEventHandler {
 public:
-  ErrorCode init(const HandleInputEventCb& handleInputEventCb);
+  ErrorCode init();
   void deinit();
   void shutdown();
 
@@ -50,23 +48,12 @@ private:
   //returns should stop or not
   bool processSingleEvent(const std::chrono::microseconds& allowedTime);
 
-  //called from a dedicated thread
-  void pollInputEvents();
-
   void invokeBlockingEvent(const ActionEventCb &cb);
 
   //stores callbacks from multiple threads and executes them sequentially
   //in the update thread in a lock-free thread-safe manner
   ThreadSafeQueue<ActionEventCb> _eventQueue;
 
-  //captures OS input events such as
-  //mouse, keyboard, joystick, touch screen, window events, etc...
-  InputEventGenerator _inputEventGenerator;
-
-  //redirect to Engine input handle event
-  HandleInputEventCb _handleInputEventCb;
-
-  std::thread _pollInputEventsThread;
   std::atomic<bool> _isActive = true;
 };
 
