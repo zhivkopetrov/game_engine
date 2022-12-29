@@ -21,7 +21,10 @@ struct EngineConfig {
   uint32_t maxFrameRate = 0;
 
   InputEventHandlerPolicy inputEventHandlerPolicy = 
-    InputEventHandlerPolicy::POLL_BLOCKING;
+    InputEventHandlerPolicy::RUN_IN_DEDICATED_THREAD;
+
+  ActionEventHandlerPolicy actionEventHandlerPolicy =
+    ActionEventHandlerPolicy::BLOCKING;
 };
 
 EngineConfig getDefaultEngineConfig(

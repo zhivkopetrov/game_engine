@@ -22,6 +22,16 @@ enum class ActionEventType {
   NON_BLOCKING
 };
 
+enum class ActionEventHandlerPolicy {
+  //will block calling thread (non-busy wait) for remaining frame time,
+  //processing all events (currently stored and newly incoming)
+  BLOCKING,
+
+  //will return control after all pending events are consumed
+  //or given allowed execution time is reached
+  NON_BLOCKING
+};
+
 using ActionEventCb = std::function<void()>;
 using InvokeActionEventCb =
     std::function<void(const ActionEventCb& cb, ActionEventType eventType)>;

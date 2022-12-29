@@ -49,7 +49,8 @@ ErrorCode Engine::init(const EngineConfig &cfg) {
     return ErrorCode::FAILURE;
   }
 
-  if (ErrorCode::SUCCESS != _actionEventHandler.init()) {
+  if (ErrorCode::SUCCESS != _actionEventHandler.init(
+      cfg.actionEventHandlerPolicy)) {
     LOGERR("Error in _actionEventHandler.init()");
     return ErrorCode::FAILURE;
   }

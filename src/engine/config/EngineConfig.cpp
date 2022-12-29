@@ -36,11 +36,15 @@ constexpr auto MAX_RESOURCE_LOADING_THREADS = 0;
 constexpr auto RENDERER_POLICY = RendererPolicy::SINGLE_THREADED;
 constexpr auto INPUT_EVENT_HANDLER_POLICY = 
   InputEventHandlerPolicy::POLL_BLOCKING;
+constexpr auto ACTION_EVENT_HANDLER_POLICY =
+  ActionEventHandlerPolicy::NON_BLOCKING;
 #else
 constexpr auto MAX_RESOURCE_LOADING_THREADS = 2;
 constexpr auto RENDERER_POLICY = RendererPolicy::MULTI_THREADED;
 constexpr auto INPUT_EVENT_HANDLER_POLICY = 
   InputEventHandlerPolicy::RUN_IN_DEDICATED_THREAD;
+constexpr auto ACTION_EVENT_HANDLER_POLICY =
+  ActionEventHandlerPolicy::BLOCKING;
 #endif
 
 LoadingScreenConfig generateLoadingScreenConfig(
@@ -68,6 +72,7 @@ EngineConfig getDefaultEngineConfig(
   EngineConfig cfg;
   cfg.maxFrameRate = MAX_FRAME_RATE;
   cfg.inputEventHandlerPolicy = INPUT_EVENT_HANDLER_POLICY;
+  cfg.actionEventHandlerPolicy = ACTION_EVENT_HANDLER_POLICY;
   cfg.debugConsoleConfig = generateDebugConsoleConfig();
 
   auto &drawMgrCfg = cfg.managerHandlerCfg.drawMgrCfg;

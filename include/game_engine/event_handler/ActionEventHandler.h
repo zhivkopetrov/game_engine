@@ -16,7 +16,7 @@
 
 class ActionEventHandler {
 public:
-  ErrorCode init();
+  ErrorCode init(ActionEventHandlerPolicy executionPolicy);
   void deinit();
   void shutdown();
 
@@ -46,13 +46,20 @@ public:
 
 private:
   //returns should stop or not
-  bool processSingleEvent(const std::chrono::microseconds& allowedTime);
+  bool processSingleEventBlockingPolicy(
+    const std::chrono::microseconds& allowedTime);
+
+  //returns should stop or not
+  bool processSingleEventNonBlockingPolicy();
 
   void invokeBlockingEvent(const ActionEventCb &cb);
 
   //stores callbacks from multiple threads and executes them sequentially
   //in the update thread in a lock-free thread-safe manner
   ThreadSafeQueue<ActionEventCb> _eventQueue;
+
+  ActionEventHandlerPolicy _executionPolicy =
+    ActionEventHandlerPolicy::BLOCKING;
 
   std::atomic<bool> _isActive = true;
 };
