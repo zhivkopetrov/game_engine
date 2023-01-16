@@ -69,9 +69,12 @@ target_link_libraries(
 
 ## Supported Platforms
 Linux:
-  - g++ 12
-  - clang++ 14
-  - Emscripten (em++) 3.1.28
+  - g++ (9.3 and above)
+    - Tested up to g++ 12.1
+  - clang++ (10 and above)
+    - Tested up to clang++ 14.0
+  - Emscripten (3.1.28 and above)
+    - emcc/em++
   - Robot Operating System 2 (ROS2)
     - Through colcon meta-build system (CMake based)
   - Robot Operating System 1 (ROS1)
@@ -79,4 +82,11 @@ Linux:
       - Due to soon ROS1 end-of-life catkin builds are not actively supported
 
 Windows:
-  - MSVC++ (>= 14.20) Visual Studio 2019
+  - MSVC++ (14.20 and above) Visual Studio 2019
+    - Tested up to 17.30 Visual Studio 2022
+  - Emscripten (3.1.28 and above)
+    - emcc/em++
+    - NOTE: non-MSVC CMake build generator is needed
+      - For example: ninja
+  - ROS1/ROS2
+    - Although the code is ROS compatible, actual ROS functionalities have not been tested on Windows
