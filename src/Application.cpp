@@ -81,15 +81,12 @@ ErrorCode Application::run() {
 }
 
 void Application::deinit() {
+  //NOTE: follow strict reset order.
+  //      Also, don't reset the pointers, because they may have async 
+  //      tasks pushed in their call stack
   _game->deinit();
-  _game.reset();
-
-  //manually reset point after deinit to enforce destruction order
   _communicator->deinit();
-  _communicator.reset();
-
   _engine->deinit();
-  _engine.reset();
 }
 
 void Application::unloadDependencies() {
