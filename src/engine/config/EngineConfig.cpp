@@ -117,8 +117,7 @@ std::vector<DependencyDescription> getDefaultEngineDependencies(
   const std::vector<DependencyDescription> dependencies { { "SDL2",
       SDLLoader::initSdl2, SDLLoader::deinitSdl2 }, { "SDL2-image",
       SDLLoader::initSdl2Image, SDLLoader::deinitSdl2Image }, { "SDL2-ttf",
-      SDLLoader::initSdl2Ttf, SDLLoader::deinitSdl2Ttf }, { "SDL2-mixer",
-      SDLLoader::initSdl2Mixer, SDLLoader::deinitSdl2Mixer } };
+      SDLLoader::initSdl2Ttf, SDLLoader::deinitSdl2Ttf } };
 
   return dependencies;
 }
