@@ -5,7 +5,7 @@
 #include <functional>
 
 //Other libraries headers
-#include "sdl_utils/input/InputEvent.h"
+#include "utils/input/InputEvent.h"
 
 //Own components headers
 

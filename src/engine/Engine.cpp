@@ -13,7 +13,7 @@
 #include "manager_utils/managers/DrawMgr.h"
 #include "manager_utils/managers/RsrcMgr.h"
 #include "manager_utils/managers/TimerMgr.h"
-#include "sdl_utils/input/InputEvent.h"
+#include "utils/input/InputEvent.h"
 #include "utils/rng/Rng.h"
 #include "utils/ErrorCode.h"
 #include "utils/Log.h"

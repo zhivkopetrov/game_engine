@@ -5,7 +5,7 @@
 #include <string>
 
 //Other libraries headers
-#include "sdl_utils/input/InputEvent.h"
+#include "utils/input/InputEvent.h"
 #include "utils/LimitValues.h"
 #include "utils/time/Time.h"
 #include "utils/ErrorCode.h"
