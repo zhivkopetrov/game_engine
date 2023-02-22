@@ -31,8 +31,21 @@ public:
   virtual void draw() const = 0;
   virtual void handleEvent(const InputEvent &e) = 0;
 
-  //called once every frame
-  virtual void process() = 0;
+  //NOTE: optionally override this method in your Game extended class
+  //This method will be called after the all subsystems initization have passed
+  //and right before the Engine enters its mainLoop.
+  //this includes graphical asset loading calls made during initialization.
+  //This could be useful where you don't want to rely on the initialization 
+  //order of you entities during the ::init() phase. 
+  //This method will be called when all entities are created and initialized.
+  //One such example could be where a StateMachine is utilized and you want to 
+  //'start' your game by entering the first state.
+  virtual void start() {}
+
+  //NOTE: optionally override this method in your Game extended class
+  //This method will be called once every engine frame
+  //It could be useful if your game utilises processing/polling behaviour
+  virtual void process() {}
 
   void setInvokeActionEventCb(const InvokeActionEventCb& cb) {
     _invokeActionEventCb = cb;

@@ -110,7 +110,7 @@ ErrorCode Engine::start() {
 }
 
 void Engine::shutdown() {
-  LOGG("Initiating shutdown...");
+  LOGG("Initiating Application shutdown...");
   _isActive = false;
   _inputEventHandler.shutdown();
   _actionEventHandler.shutdown();
@@ -128,6 +128,7 @@ void Engine::shutdown() {
 
 void Engine::mainLoop() {
   mainLoopPrepare();
+  _game.start();
 
   #ifdef __EMSCRIPTEN__
     const int32_t requestedFPS = 

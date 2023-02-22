@@ -14,7 +14,7 @@
 Application::~Application() noexcept {
   deinit();
   unloadDependencies();
-  LOGG("Shutdown complete");
+  LOGG("Application shutdown complete");
   printUptime();
 }
 
@@ -72,6 +72,7 @@ ErrorCode Application::init(const ApplicationConfig &cfg) {
     return ErrorCode::FAILURE;
   }
 
+  LOGG("Application init finished successfully");
   return ErrorCode::SUCCESS;
 }
 
