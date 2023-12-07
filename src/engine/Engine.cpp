@@ -16,7 +16,7 @@
 #include "utils/input/InputEvent.h"
 #include "utils/rng/Rng.h"
 #include "utils/ErrorCode.h"
-#include "utils/Log.h"
+#include "utils/log/Log.h"
 
 //Own components headers
 #include "game_engine/communicator/Communicator.h"

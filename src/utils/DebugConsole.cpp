@@ -9,7 +9,7 @@
 #include "utils/LimitValues.h"
 #include "utils/time/Time.h"
 #include "utils/ErrorCode.h"
-#include "utils/Log.h"
+#include "utils/log/Log.h"
 
 //Own components headers
 #include "game_engine/utils/config/DebugConsoleConfig.h"
