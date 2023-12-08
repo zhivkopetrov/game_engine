@@ -82,12 +82,20 @@ ErrorCode Application::run() {
 }
 
 void Application::deinit() {
-  //NOTE: follow strict reset order.
-  //      Also, don't reset the pointers, because they may have async 
-  //      tasks pushed in their call stack
-  _game->deinit();
-  _communicator->deinit();
-  _engine->deinit();
+  //Notes: 
+  //      - Follow strict reset order.
+  //      - Don't reset the pointers, because they may have async 
+  //                       tasks pushed in their call stack.
+  //      - Check for pointer values (in case a call to ::init was skipped).
+  if (_game) {
+    _game->deinit();
+  }
+  if (_communicator) {
+    _communicator->deinit();
+  }
+  if (_engine) {
+    _engine->deinit();
+  }
 }
 
 void Application::unloadDependencies() {
