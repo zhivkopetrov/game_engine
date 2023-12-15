@@ -59,8 +59,17 @@ void DebugConsole::update(const DebugConsoleData &data) {
   }
   _updateCounter = UPDATE_SKIPS;
 
-  constexpr auto microsecondsInASecond = 1000000;
-  auto currFrames = microsecondsInASecond / data.elapsedMicroSeconds;
+  if (0 == data.elapsedMicroSeconds) {
+    // on some extremely fast CPUs, in certain cases the 
+    // 'data.elapsedMicroseSeconds' might be 0. Simply skip this case 
+    // in order not to cause a floating point exception (division by zero).
+    // The other alternative would be to step down the elapsedTimer to a 
+    // nano second precision, which is not needed at the moment.
+    return;
+  }
+
+  constexpr int64_t microsecondsInASecond = 1000000;
+  int64_t currFrames = microsecondsInASecond / data.elapsedMicroSeconds;
   if (currFrames > _maxFrames) {
     currFrames = _maxFrames;
   }

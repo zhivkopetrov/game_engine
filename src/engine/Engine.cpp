@@ -154,7 +154,7 @@ void Engine::mainLoopInternal() {
     process();
     drawFrame();
 
-    const auto elapsedMiscroSeconds = fpsTime.getElapsed().toMicroseconds();
+    const int64_t elapsedMiscroSeconds = fpsTime.getElapsed().toMicroseconds();
     if (_debugConsole.isActive()) {
       populateDebugConsole(elapsedMiscroSeconds);
     }
